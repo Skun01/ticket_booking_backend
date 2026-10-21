@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: backend
+  config:
+    import: optional:file:.env[.properties]
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+app:
+  jwt:
+    issuer: ${spring.application.name}
+    access-token-ttl: 15m
+    refresh-token-ttl: 7d
+    refresh-cookie-secure: true
+    refresh-token-cleanup-cron: "0 0 3 * * *"

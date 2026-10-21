@@ -1,0 +1,9 @@
+# Datasource do Testcontainers cung cấp (xem TestcontainersConfiguration)
+app:
+  jwt:
+    secret: Sw5kVM+8cgkd6yA8O/zN+YsCtBfRb3oQ7B23+rUC+0w=
+  cors:
+    allowed-origins: "http://localhost:[*]"
+  admin:
+    email: admin@test.local
+    password: admin12345
