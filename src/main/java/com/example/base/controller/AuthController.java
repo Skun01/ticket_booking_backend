@@ -8,6 +8,7 @@ import com.example.base.dto.auth.LoginRequest;
 import com.example.base.dto.auth.RegisterRequest;
 import com.example.base.dto.auth.TokenResponse;
 import com.example.base.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -31,22 +32,26 @@ public class AuthController {
 	private final AuthService authService;
 	private final JwtProperties jwtProperties;
 
+	@Operation(summary = "Đăng ký tài khoản")
 	@PostMapping("/register")
 	public ResponseEntity<TokenResponse> register(@Valid @RequestBody RegisterRequest request) {
 		return tokenResponse(HttpStatus.CREATED, authService.register(request));
 	}
 
+	@Operation(summary = "Đăng nhập")
 	@PostMapping("/login")
 	public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
 		return tokenResponse(HttpStatus.OK, authService.login(request));
 	}
 
+	@Operation(summary = "Làm mới access token")
 	@PostMapping("/refresh")
 	public ResponseEntity<TokenResponse> refresh(
 			@CookieValue(name = REFRESH_COOKIE, required = false) String refreshToken) {
 		return tokenResponse(HttpStatus.OK, authService.refresh(refreshToken));
 	}
 
+	@Operation(summary = "Đăng xuất")
 	@PostMapping("/logout")
 	public ResponseEntity<Void> logout(
 			@CookieValue(name = REFRESH_COOKIE, required = false) String refreshToken) {

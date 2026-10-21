@@ -36,6 +36,7 @@ File này có hai phần. **Phần BASE** là quy ước của base project, đ�
 - DTO được nhóm theo domain trong sub-package tương ứng (`dto/auth`, `dto/common`...).
 - Config: đặt dưới `app.*`, đọc bằng `@ConfigurationProperties` record, không dùng `@Value`.
 - Comment bằng tiếng Việt có dấu, đặt ở dòng riêng, chỉ giải thích "tại sao".
+- Swagger: chỉ viết summary ngắn gọn qua `@Operation(summary = "...")` cho các API để quá trình develop dễ nhận diện API đấy để làm gì, không viết chi tiết rườm rà.
 
 ## Format code
 
@@ -53,7 +54,7 @@ File này có hai phần. **Phần BASE** là quy ước của base project, đ�
 
 ## Bảo mật
 
-- Mọi endpoint mặc định yêu cầu JWT. Chỉ `/api/auth/**` và `/error` là public.
+- Mọi endpoint mặc định yêu cầu JWT. Chỉ `/api/auth/**`, `/error` và Swagger UI / OpenAPI (`/v3/api-docs/**`, `/swagger-ui/**`, `/swagger-ui.html`) là public.
 - Phân quyền bằng `@PreAuthorize("hasRole('ADMIN')")`.
 - Không commit secret thật. Profile `prod` lấy mọi giá trị nhạy cảm từ biến môi trường.
 

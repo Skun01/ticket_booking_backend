@@ -2,6 +2,7 @@ package com.example.base.controller;
 
 import com.example.base.dto.auth.UserResponse;
 import com.example.base.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,7 @@ public class UserController {
 
 	private final UserService userService;
 
+	@Operation(summary = "Lấy thông tin người dùng hiện tại")
 	@GetMapping("/me")
 	public UserResponse me(@AuthenticationPrincipal Jwt jwt) {
 		return UserResponse.from(userService.getById(Long.valueOf(jwt.getSubject())));

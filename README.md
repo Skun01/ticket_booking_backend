@@ -9,6 +9,7 @@ Project tích hợp sẵn xác thực JWT HS256, xoay refresh token trong HttpOn
 - Spring Web MVC, Bean Validation
 - Spring Data JPA, MySQL 8, Liquibase
 - Spring Security + OAuth2 Resource Server (JWT HS256), BCrypt
+- Springdoc OpenAPI (Swagger UI)
 - Lombok
 - Test: JUnit 5, MockMvc, Testcontainers (MySQL 8.4)
 
@@ -24,6 +25,7 @@ Project tích hợp sẵn xác thực JWT HS256, xoay refresh token trong HttpOn
 
 - Mặc định chạy profile `dev` với URL: `jdbc:mysql://localhost:3306/base_project?createDatabaseIfNotExist=true`
 - Tài khoản quản trị khởi tạo mặc định: `admin@example.com` / `admin12345`
+- Tài liệu Swagger UI: `http://localhost:8080/swagger-ui.html`
 
 ## Các endpoint xác thực mặc định
 

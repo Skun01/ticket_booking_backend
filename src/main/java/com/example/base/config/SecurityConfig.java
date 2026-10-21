@@ -42,6 +42,11 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 public class SecurityConfig {
 
 	private static final String AUTH_PATH = "/api/auth/**";
+	private static final String[] SWAGGER_PATHS = {
+			"/v3/api-docs/**",
+			"/swagger-ui/**",
+			"/swagger-ui.html"
+	};
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http,
@@ -54,6 +59,7 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
 					.requestMatchers(AUTH_PATH, "/error").permitAll()
+					.requestMatchers(SWAGGER_PATHS).permitAll()
 					.anyRequest().authenticated())
 			.exceptionHandling(exceptions -> exceptions
 					.authenticationEntryPoint(authenticationEntryPoint)

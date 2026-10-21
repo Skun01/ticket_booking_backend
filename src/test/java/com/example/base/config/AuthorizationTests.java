@@ -43,4 +43,13 @@ class AuthorizationTests {
 				.andExpect(status().isOk());
 	}
 
+	@Test
+	void swaggerEndpointsArePubliclyAccessible() throws Exception {
+		mockMvc.perform(get("/v3/api-docs"))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(get("/swagger-ui/index.html"))
+				.andExpect(status().isOk());
+	}
+
 }
