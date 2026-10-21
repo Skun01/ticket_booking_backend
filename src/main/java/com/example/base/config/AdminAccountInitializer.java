@@ -1,7 +1,7 @@
 package com.example.base.config;
 
 import com.example.base.config.property.AdminAccountProperties;
-import com.example.base.domain.Role;
+import com.example.base.domain.enums.Role;
 import com.example.base.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

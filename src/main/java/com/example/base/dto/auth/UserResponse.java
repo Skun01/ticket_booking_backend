@@ -1,7 +1,7 @@
 package com.example.base.dto.auth;
 
-import com.example.base.domain.Role;
 import com.example.base.domain.User;
+import com.example.base.domain.enums.Role;
 
 public record UserResponse(Long id, String email, String fullName, Role role) {
 

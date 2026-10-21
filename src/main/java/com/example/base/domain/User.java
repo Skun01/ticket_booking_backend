@@ -1,5 +1,6 @@
 package com.example.base.domain;
 
+import com.example.base.domain.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

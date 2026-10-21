@@ -4,8 +4,8 @@ import java.time.Instant;
 
 import com.example.base.config.property.JwtProperties;
 import com.example.base.domain.RefreshToken;
-import com.example.base.domain.Role;
 import com.example.base.domain.User;
+import com.example.base.domain.enums.Role;
 import com.example.base.dto.auth.AuthTokens;
 import com.example.base.dto.auth.LoginRequest;
 import com.example.base.dto.auth.RegisterRequest;

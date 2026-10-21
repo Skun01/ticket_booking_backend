@@ -2,8 +2,8 @@ package com.example.base.service;
 
 import java.util.Optional;
 
-import com.example.base.domain.Role;
 import com.example.base.domain.User;
+import com.example.base.domain.enums.Role;
 
 public interface UserService {
 

@@ -2,8 +2,8 @@ package com.example.base.service.impl;
 
 import java.util.Optional;
 
-import com.example.base.domain.Role;
 import com.example.base.domain.User;
+import com.example.base.domain.enums.Role;
 import com.example.base.exception.AppException;
 import com.example.base.exception.UserErrorCode;
 import com.example.base.repository.UserRepository;
