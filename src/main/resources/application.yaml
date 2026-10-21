@@ -3,6 +3,10 @@ spring:
     name: backend
   config:
     import: optional:file:.env[.properties]
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/sport_slot_db?createDatabaseIfNotExist=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
   jpa:
     open-in-view: false
     hibernate:
@@ -14,8 +18,14 @@ spring:
 
 app:
   jwt:
+    secret: ${JWT_SECRET:My3qaTaqc3YzHsmjWIJ4b6+wHCkfMXkHt/Mlj7lkxSA=}
     issuer: ${spring.application.name}
     access-token-ttl: 15m
     refresh-token-ttl: 7d
-    refresh-cookie-secure: true
+    refresh-cookie-secure: ${REFRESH_COOKIE_SECURE:false}
     refresh-token-cleanup-cron: "0 0 3 * * *"
+  cors:
+    allowed-origins: "${CORS_ALLOWED_ORIGINS:http://localhost:[*]}"
+  admin:
+    email: ${ADMIN_EMAIL:admin@example.com}
+    password: ${ADMIN_PASSWORD:admin12345}
