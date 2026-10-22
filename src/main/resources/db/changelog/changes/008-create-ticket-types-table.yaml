@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-create-ticket-types-table
+      author: init
+      changes:
+        - createTable:
+            tableName: ticket_types
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: event_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_ticket_types_event
+                    references: events(id)
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: DECIMAL(12, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_quantity
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sold_quantity
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: max_per_order
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sale_start
+                  type: DATETIME(6)
+              - column:
+                  name: sale_end
+                  type: DATETIME(6)
+              - column:
+                  name: created_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false

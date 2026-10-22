@@ -7,3 +7,11 @@ databaseChangeLog:
       file: db/changelog/changes/003-add-refresh-tokens-expires-at-index.yaml
   - include:
       file: db/changelog/changes/004-alter-users-add-phone-status.yaml
+  - include:
+      file: db/changelog/changes/005-create-categories-table.yaml
+  - include:
+      file: db/changelog/changes/006-create-venues-table.yaml
+  - include:
+      file: db/changelog/changes/007-create-events-table.yaml
+  - include:
+      file: db/changelog/changes/008-create-ticket-types-table.yaml

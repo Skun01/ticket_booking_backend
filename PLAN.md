@@ -61,7 +61,8 @@ Entity (không setter, đổi trạng thái qua method; `@ManyToOne` LAZY):
 - `Category(name, slug)` — changeset 005
 - `Venue(name, address, city, capacity)` — changeset 006
 - `Event(organizer→User, category, venue, title, description, bannerUrl, startTime, endTime, status)` với `EventStatus` DRAFT/PUBLISHED/CANCELLED/ENDED; method `publish()/cancel()/end()` — changeset 007 (index `events(status, start_time)`)
-- `TicketType(event, name, price, totalQuantity, soldQuantity, maxPerOrder, saleStart, saleEnd)`; method `increaseSold(qty)/releaseSold(qty)` — changeset 008
+- `TicketType(event, name, price, totalQuantity, soldQuantity, maxPerOrder, saleStart, saleEnd)` — changeset 008.
+  Thao tác giữ/trả kho triển khai ở Phase 4 bằng conditional update, không tăng `soldQuantity` qua API cấu hình.
 
 Endpoint:
 - Admin: `POST/PUT/DELETE /api/admin/categories`, `/api/admin/venues` (`@PreAuthorize hasRole('ADMIN')`)
@@ -70,6 +71,14 @@ Endpoint:
 DTO request/response `record`; mapping `Response.from(entity)`. ErrorCode riêng: `EventErrorCode`, `TicketTypeErrorCode`, `CatalogErrorCode`.
 
 **Done khi:** organizer tạo được event + ticket type; admin quản lý category/venue.
+
+Quy tắc triển khai Phase 2:
+- Admin có CRUD category/venue, bao gồm danh sách phân trang; organizer có danh sách/chi tiết sự kiện của mình.
+- Cấu hình event/ticket type chỉ thay đổi khi `DRAFT`; tổng vé các hạng không vượt capacity của venue.
+- Publish yêu cầu sự kiện chưa bắt đầu và có hạng vé; `ENDED` chỉ khi đã qua `endTime`.
+- Owner publish trực tiếp theo endpoint hiện tại; quy trình admin duyệt sự kiện riêng chưa triển khai.
+- Không xóa category/venue đang được dùng, không đổi capacity của venue đã gắn sự kiện.
+- DTO được map trong transaction của service; hướng dẫn API và JSON mẫu có trong `README.md`.
 
 ---
 
