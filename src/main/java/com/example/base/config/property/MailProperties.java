@@ -1,8 +1,13 @@
 package com.example.base.config.property;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
+
+@Validated
 @ConfigurationProperties("app.mail-sender")
 public record MailProperties(
-		String from) {
+		@NotBlank @Email String from) {
 }

@@ -1,0 +1,110 @@
+databaseChangeLog:
+  - changeSet:
+      id: 013-create-activity-logs-table
+      author: init
+      changes:
+        - createTable:
+            tableName: activity_logs
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: message_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: action
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entity_type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entity_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: detail
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: activity_logs
+            columnNames: message_id, action
+            constraintName: uk_activity_logs_message_action
+        - createIndex:
+            tableName: activity_logs
+            indexName: idx_activity_logs_user_created
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: created_at
+  - changeSet:
+      id: 013-create-mail-deliveries-table
+      author: init
+      changes:
+        - createTable:
+            tableName: mail_deliveries
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_mail_deliveries_order
+                    references: orders(id)
+              - column:
+                  name: message_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sent_at
+                  type: DATETIME(6)
+              - column:
+                  name: created_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: mail_deliveries
+            columnNames: order_id
+            constraintName: uk_mail_deliveries_order

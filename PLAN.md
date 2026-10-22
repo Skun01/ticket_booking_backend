@@ -162,15 +162,35 @@ không coi compile là bằng chứng các tình huống runtime đã được x
 
 ## Phase 5 — RabbitMQ: mail + activity log (`p5-rabbitmq`)
 
-1. `activity_logs` entity + changeset 013 (`userId, action, entityType, entityId, detail, createdAt`).
+1. File changeset `013-create-notification-tables.yaml` thêm hai bảng:
+   - `activity_logs`: `messageId, userId, action, entityType, entityId, detail, createdAt/updatedAt`;
+     unique `(messageId, action)` và index `(userId, createdAt)`.
+   - `mail_deliveries`: receipt gửi mail, orderId unique, messageId, sentAt, createdAt/updatedAt;
+     serialize xử lý mail cho cùng order để tránh gửi lại sau khi đã ghi nhận thành công.
 2. Topic exchange; routing key `order.paid`, `order.cancelled`; queue `mail.queue` (binding `order.paid`) + `log.queue` (binding `order.#`).
 3. `notification/`:
    - Kế thừa `OrderEventPublisher` + `OrderMessage` đã có ở Phase 4, gửi sau commit khi pay/cancel.
    - `MailListener` `@RabbitListener(queues=mail.queue)`: gửi email vé (đính kèm PDF ở Phase 7), ACK thủ công/manual.
    - `ActivityLogListener` `@RabbitListener(queues=log.queue)`: ghi `activity_logs` (dùng `REQUIRES_NEW`).
-4. Message DTO (record) serialize JSON (`Jackson2JsonMessageConverter`).
+4. Message DTO (record) serialize JSON (`Jackson2JsonMessageConverter`), trust package DTO order;
+   validate field, routing key/status, AMQP messageId nếu có và đối chiếu order trong DB.
+5. ACK chỉ sau transaction commit; `OrderMessageHandler` retry nghiệp vụ mặc định 2 lần (tổng 3 attempts),
+   delay 1s/2s; không retry ACK. Payload sai hoặc hết retry thì reject không requeue.
+   DLX `order.dlx` (direct) dẫn đến `mail.dlq`/`log.dlq`; không tự replay message lỗi.
+6. Mail plain text UTF-8 lấy recipient và danh sách mã vé/event/venue từ DB; có timeout SMTP.
+   `OrderMailService` chỉ làm nghiệp vụ đọc/map DTO, sender/processor/listener nằm ở `notification/`.
+   PDF/QR chưa gửi, bổ sung ở Phase 7.
+7. `ActivityLogService` dùng `REQUIRES_NEW`, khóa order và unique key chống ghi trùng.
+   Mail có receipt + transaction riêng; crash sau SMTP nhưng trước DB commit vẫn có thể gửi trùng.
+   Publish AFTER_COMMIT vẫn best effort, chưa có outbox/publisher confirms hay exactly-once.
+8. Queue cũ không thêm arguments trực tiếp được: README hướng dẫn giữ declaration cũ bằng env
+   `RABBITMQ_DECLARE_DEAD_LETTER_ARGUMENTS=false` kết hợp broker policy DLX tương đương.
+   Không tự xóa/purge queue; không tắt arguments khi chưa có policy vì reject có thể làm mất message.
 
-**Done khi:** pay/cancel đẩy message; consumer ghi log + gửi mail (mail có thể dùng MailHog/greenmail khi demo).
+**Done ở mức code khi:** đủ consumer, schema, ACK/retry/DLQ, mail/log và compile không test thành công.
+Checklist runtime gồm pay/cancel nhận đúng mail/log, replay idempotent, SMTP lỗi vào DLQ,
+message sai JSON, consumer đồng thời và migrate queue cũ nằm trong README;
+cần chạy trên MySQL/RabbitMQ/SMTP khi demo, không coi compile là xác nhận runtime.
 
 ---
 

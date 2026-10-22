@@ -298,7 +298,7 @@ Message có `messageId`, `orderId`, `orderCode`, `userId`, `email`, `status`, `t
 Đây là publish sau commit **best effort**, chưa có transactional outbox/publisher confirm/retry bền vững:
 DB có thể commit nhưng broker lỗi hoặc process dừng trước khi gửi. Lỗi gửi được log cùng orderId/messageId,
 không biến pay/cancel đã commit thành HTTP lỗi giả. Chưa bảo đảm exactly-once hay chống mất message.
-Consumer gửi mail/activity log thuộc Phase 5, chưa triển khai trong Phase 4.
+Consumer mail/activity log được bổ sung ở Phase 5 bên dưới; giới hạn publish best effort vẫn giữ nguyên.
 
 ### Kiểm chứng thủ công khi chạy demo
 
@@ -312,3 +312,123 @@ Sau khi có MySQL/RabbitMQ và chạy app để Liquibase tạo schema:
 7. Check-in đồng thời một mã vé: kỳ vọng một thành công, một `409 TICKET_ALREADY_USED`.
 
 Các bước trên là checklist runtime, chưa được xác nhận chỉ bằng Maven compile; không tự tạo/chạy test.
+
+## RabbitMQ: email vé và activity log (Phase 5)
+
+Không thêm HTTP endpoint trong phase này. File Liquibase **013-create-notification-tables.yaml** thêm:
+- `activity_logs`: userId, action (`ORDER_PAID`/`ORDER_CANCELLED`), entityType `ORDER`, entityId, detail,
+  messageId, createdAt/updatedAt. Unique `(message_id, action)` chống ghi log trùng khi broker giao lại message.
+  `detail` lưu thời điểm phát sự kiện `occurredAt`; createdAt là lúc consumer ghi nhận.
+- `mail_deliveries`: receipt email với `order_id` unique, messageId và sentAt; chặn hai consumer cùng gửi một đơn.
+  Receipt là thông tin xử lý kỹ thuật, không thay thế activity log nghiệp vụ.
+
+### Topology mặc định
+
+| Exchange | Routing key/binding | Queue | Xử lý |
+|---|---|---|---|
+| `order.exchange` (topic, durable) | `order.paid` | `mail.queue` (durable) | Email vé cho đơn PAID |
+| `order.exchange` | `order.#` | `log.queue` (durable) | Log PAID/CANCELLED |
+| `order.dlx` (direct, durable) | `mail.dlq` | `mail.dlq` (durable) | Message mail bị reject |
+| `order.dlx` | `log.dlq` | `log.dlq` (durable) | Message log bị reject |
+
+`MailListener`/`ActivityLogListener` dùng factory riêng, `MANUAL ACK`, prefetch mặc định 10.
+Converter JSON chỉ trust package DTO order. Cả hai kiểm tra dữ liệu đầu vào, status/routing key và messageId;
+AMQP messageId nếu có phải khớp messageId trong JSON. Consumer còn đối chiếu orderCode, userId, totalAmount,
+status với DB, không dùng dữ liệu message để thay đổi trạng thái đơn.
+Binding `order.#` chuẩn bị cho mở rộng nhưng hiện chỉ hỗ trợ PAID/CANCELLED; loại sự kiện khác vào DLQ.
+
+### ACK, retry và giao lại message
+
+- Activity log gọi bean `ActivityLogService` với `REQUIRES_NEW`, khóa order rồi kiểm tra unique key.
+  Transaction đã commit mới `basicAck(tag, false)`; giao lại cùng messageId/action thì bỏ qua ghi trùng và ACK.
+- Email nạp recipient, tên khách, thông tin sự kiện/venue và từng mã vé từ DB trong service transaction.
+  Trường email trong message không được dùng làm đích gửi. DTO được map trước khi ra khỏi service.
+- `OrderMailProcessor` có transaction riêng, upsert/khóa receipt theo orderId để serialize gửi email.
+  Chỉ đánh dấu sentAt sau khi SMTP chấp nhận lệnh gửi và commit DB trước khi ACK.
+  Receipt đã sent thì không gửi lại, kể cả replay đổi messageId; không khóa ghi order suốt lúc gọi SMTP.
+- Retry chỉ bao quanh nghiệp vụ, không bao quanh ACK/reject: mặc định **2 retry + lần đầu = tối đa 3 lần**,
+  nghỉ 1 giây rồi 2 giây. Mỗi lần retry gọi qua bean transaction mới, không tiếp tục transaction đã rollback.
+  Message không hợp lệ không retry; JSON lỗi trước khi vào listener cũng bị reject trong MANUAL mode.
+- Hết lượt: `basicReject(tag, false)`, broker chuyển sang DLX/DLQ. Không tự requeue vô hạn hay tự replay DLQ.
+  Nếu kết nối/channel mất trước ACK, broker có thể giao lại; kiểm tra trùng bằng DB vẫn cần thiết.
+- SMTP và MySQL không có transaction chung: crash/timeout sau SMTP chấp nhận nhưng trước DB commit có thể gửi trùng.
+  sentAt có nghĩa SMTP đã nhận, không bảo đảm email đã tới inbox. Chưa bảo đảm exactly-once.
+- DLQ không thay thế transactional outbox/publisher confirms. Publish từ app sang broker vẫn best effort;
+  cơ chế dead-letter mặc định của classic queue cũng không phải bảo đảm chống mất tuyệt đối khi broker sự cố.
+
+Email là plain text UTF-8, có orderCode, tổng tiền, mã vé/hạng vé, event, venue và giờ UTC.
+PDF/QR đính kèm để **Phase 7**, chưa có trong email Phase 5.
+
+### Chạy RabbitMQ và SMTP demo local
+
+Ví dụ Docker, chỉ bind cổng về localhost, dùng cho development:
+
+```bash
+docker run -d --name sportslot-rabbit -p 127.0.0.1:5672:5672 -p 127.0.0.1:15672:15672 rabbitmq:4-management
+docker run -d --name sportslot-mailhog -p 127.0.0.1:1025:1025 -p 127.0.0.1:8025:8025 mailhog/mailhog:v1.0.1
+```
+
+- RabbitMQ UI: `http://localhost:15672` (guest/guest chỉ cho local demo).
+- MailHog UI: `http://localhost:8025`, SMTP `localhost:1025`, không cần auth/TLS.
+- Chạy backend với MySQL như hướng dẫn đầu README. Không dùng credential development khi deploy.
+
+| Env | Mặc định | Ý nghĩa |
+|---|---|---|
+| `RABBITMQ_HOST` / `RABBITMQ_PORT` | `localhost` / `5672` | Broker |
+| `RABBITMQ_USERNAME` / `RABBITMQ_PASSWORD` | `guest` / `guest` | Tài khoản local |
+| `RABBITMQ_EXCHANGE` | `order.exchange` | Topic exchange |
+| `RABBITMQ_MAIL_QUEUE` / `RABBITMQ_LOG_QUEUE` | `mail.queue` / `log.queue` | Queue xử lý |
+| `RABBITMQ_DEAD_LETTER_EXCHANGE` | `order.dlx` | Direct exchange lỗi |
+| `RABBITMQ_MAIL_DLQ` / `RABBITMQ_LOG_DLQ` | `mail.dlq` / `log.dlq` | Queue lỗi |
+| `RABBITMQ_CONSUMER_MAX_RETRIES` | `2` | Số retry, từ 0 đến 10 (không tính lần đầu) |
+| `RABBITMQ_CONSUMER_RETRY_DELAY_MILLIS` | `1000` | Delay đầu, 100–60000 ms; delay tối đa gấp 2 |
+| `RABBITMQ_CONSUMER_PREFETCH` | `10` | Prefetch mỗi consumer, từ 1 đến 1000 |
+| `RABBITMQ_DECLARE_DEAD_LETTER_ARGUMENTS` | `true` | App khai báo x-dead-letter-* trên queue |
+| `MAIL_HOST` / `MAIL_PORT` | `localhost` / `1025` | SMTP |
+| `MAIL_USERNAME` / `MAIL_PASSWORD` | rỗng | SMTP credentials nếu cần |
+| `MAIL_SMTP_AUTH` / `MAIL_SMTP_STARTTLS` | `false` / `false` | Cấu hình SMTP theo nhà cung cấp |
+| `MAIL_FROM` | `no-reply@sportslot.local` | From hợp lệ, cấu hình qua app.mail-sender.from |
+| `MAIL_CONNECTION_TIMEOUT` / `MAIL_READ_TIMEOUT` / `MAIL_WRITE_TIMEOUT` | `5000` | Timeout SMTP, đơn vị ms |
+
+### Nâng cấp broker đã có queue từ Phase 0–4
+
+RabbitMQ không cho redeclare queue cũ với arguments khác: thêm `x-dead-letter-*` có thể báo
+**`406 PRECONDITION_FAILED / inequivalent arg`**. App không tự xóa/purge queue.
+
+**Cách không xóa queue cũ:** áp dụng broker policy khi backend/consumer đang dừng, rồi cấu hình
+`RABBITMQ_DECLARE_DEAD_LETTER_ARGUMENTS=false` để app giữ declaration cũ (không x-arguments).
+Ví dụ dưới đây chạy bằng **Bash/Git Bash**, dùng đúng vhost và tên queue thực tế:
+
+```bash
+docker exec sportslot-rabbit rabbitmqctl set_policy --apply-to queues sportslot-mail-dlx '^mail[.]queue$' \
+  '{"dead-letter-exchange":"order.dlx","dead-letter-routing-key":"mail.dlq"}'
+docker exec sportslot-rabbit rabbitmqctl set_policy --apply-to queues sportslot-log-dlx '^log[.]queue$' \
+  '{"dead-letter-exchange":"order.dlx","dead-letter-routing-key":"log.dlq"}'
+```
+
+Sau đó khởi động app và kiểm tra queue effective policy trong UI; app vẫn khai báo DLX, DLQ và bindings.
+Nếu queue đã có arguments từ Phase 5 thì giữ chế độ `true`, không đổi sang declaration thiếu arguments.
+Nếu có policy khác, cần hợp nhất đúng DLX/routing key thay vì ghi đè tùy tiện.
+
+**Không tắt declare-dead-letter-arguments khi chưa cấu hình policy tương đương:** reject không có DLX sẽ bỏ message.
+Với môi trường dev queue trống, cũng có thể dừng app, kiểm tra không còn ready/unacked message, rồi operator
+chủ động xóa/recreate queue; không áp dụng cách này khi còn dữ liệu. Không có thao tác xóa broker tự động trong code.
+
+### Checklist runtime và replay DLQ
+
+1. Pay đơn mới: kỳ vọng một log ORDER_PAID, một mail trong MailHog và receipt sentAt khác null.
+2. Cancel đơn PENDING: kỳ vọng ORDER_CANCELLED, không gửi email vé; pay/cancel idempotent không phát message mới.
+3. Replay cùng payload/messageId lên exchange/routing key gốc: log không thêm bản ghi, email không gửi lại.
+4. Dừng MailHog rồi pay đơn khác: log vẫn xử lý riêng; mail retry hữu hạn rồi vào mail.dlq.
+   Khi SMTP trở lại, operator replay đúng message lỗi; gửi thành công mới có receipt sentAt.
+5. Payload thiếu field/sai UUID/status/routing key hoặc JSON hỏng: kỳ vọng DLQ, không treo unacked vô hạn.
+6. Thử hai consumer/instance xử lý trùng: kỳ vọng log/receipt DB ngăn tạo trùng; vẫn lưu ý cửa sổ SMTP nêu trên.
+
+Khi replay, giữ nguyên JSON messageId và AMQP messageId (nếu có), giữ content_type `application/json`,
+publish lên **order.exchange với routing key gốc** (`order.paid` hoặc `order.cancelled`), không publish thẳng queue.
+Một order.paid sẽ đi vào cả hai queue; consumer đã thành công sẽ bỏ qua nhờ idempotency.
+Bỏ type headers không rõ nguồn; converter suy luận OrderMessage từ chữ ký listener.
+Không tự chuyển DLQ ngược lại queue bằng TTL vì poison message có thể lặp vô hạn.
+Chỉ ACK/xóa bản DLQ sau khi xác nhận replay đã được broker nhận và theo dõi kết quả; chưa có API replay trong app.
+
+Các mục trên là hướng dẫn vận hành cần xác minh với MySQL/RabbitMQ/SMTP thực tế, không phải kết quả của compile.
