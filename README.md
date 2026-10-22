@@ -58,7 +58,7 @@ Các API dưới đây yêu cầu `Authorization: Bearer <access_token>`.
 Danh sách admin và danh sách sự kiện của organizer nhận `page` (mặc định `0`) và `size`
 (mặc định `20`, tối đa `100`), sắp xếp `id` giảm dần. Response có các trường
 `content`, `page`, `size`, `totalElements`, `totalPages`.
-Tìm kiếm sự kiện public bằng **Specification** sẽ được triển khai ở Phase 3.
+Tìm kiếm sự kiện public bằng **Specification** được mô tả ở phần Phase 3 bên dưới.
 
 ### Quy tắc nghiệp vụ
 
@@ -123,3 +123,72 @@ Publish qua `PATCH /api/organizer/events/{id}/status` với body `{"status":"PUB
 Hiện chưa có API cấp role ORGANIZER. Để demo trên DB development: đăng ký tài khoản CUSTOMER,
 đổi role của đúng tài khoản đó thành ORGANIZER trong DB, rồi đăng nhập lại để nhận JWT mới.
 Không cho client tự chọn role khi đăng ký.
+
+## API public xem sự kiện (Phase 3)
+
+Không cần JWT cho đúng hai endpoint GET sau. Các API quản lý và các HTTP method khác vẫn yêu cầu xác thực.
+Nếu gửi kèm Bearer token không hợp lệ/hết hạn, Spring Security vẫn trả `401`.
+
+| Method | Endpoint | Mô tả |
+|---|---|---|
+| GET | `/api/events` | Lọc và phân trang sự kiện `PUBLISHED` |
+| GET | `/api/events/{id}` | Chi tiết sự kiện `PUBLISHED`, kèm danh sách hạng vé |
+
+### Bộ lọc và phân trang
+
+| Query param | Quy tắc |
+|---|---|
+| `categoryId` | ID danh mục, số dương; không có danh mục tương ứng thì danh sách rỗng |
+| `city` | So khớp tên thành phố đầy đủ, bỏ khoảng trắng hai đầu và không phân biệt hoa/thường; rỗng thì bỏ qua |
+| `from` | `startTime >= from`, thời gian ISO-8601 có timezone |
+| `to` | `startTime < to`, thời gian ISO-8601 có timezone |
+| `page` | Mặc định `0`, không âm |
+| `size` | Mặc định `20`, từ `1` đến `100` |
+
+Các bộ lọc có thể kết hợp và luôn có điều kiện `status = PUBLISHED`.
+Nếu truyền cả `from` và `to`, phải có `from < to`; sai khoảng trả `400`, code `INVALID_EVENT_FILTER_TIME`.
+Kết quả sắp xếp `startTime ASC, id ASC` để phân trang ổn định khi nhiều sự kiện cùng giờ.
+Không tự động lọc theo giờ hiện tại; sự kiện vẫn `PUBLISHED` thì vẫn xuất hiện cho đến khi đổi trạng thái.
+
+Ví dụ xem sự kiện bắt đầu trong tháng 6/2027:
+
+```bash
+curl -G "http://localhost:8080/api/events" \
+  --data-urlencode "categoryId=1" \
+  --data-urlencode "city=Hồ Chí Minh" \
+  --data-urlencode "from=2027-06-01T00:00:00Z" \
+  --data-urlencode "to=2027-07-01T00:00:00Z" \
+  --data-urlencode "page=0" \
+  --data-urlencode "size=20"
+```
+
+Response phân trang gồm `content`, `page`, `size`, `totalElements`, `totalPages`.
+Mỗi phần tử là DTO tóm tắt: `id`, `title`, `bannerUrl`, `startTime`, `endTime`, `category`, `venue`.
+Danh sách không tải các hạng vé vì không cần cho DTO tóm tắt.
+
+### Chi tiết và tồn vé
+
+`GET /api/events/{id}` trả thêm `description` và `ticketTypes` (sắp xếp ID tăng dần).
+Mỗi hạng vé có `availableQuantity = totalQuantity - soldQuantity`, giá và khoảng bán vé.
+Hạng vé hết chỗ hoặc chưa mở bán vẫn được hiển thị; số còn lại không đồng nghĩa được phép đặt ngay.
+Điều kiện đặt vé được xử lý ở Phase 4, tồn vé có thể thay đổi sau khi xem.
+ID không tồn tại hoặc sự kiện `DRAFT`/`CANCELLED`/`ENDED` đều trả `404`, code `EVENT_NOT_FOUND`.
+
+### Specification và N+1
+
+- `repository/specification/EventSpecifications` tạo từng điều kiện bằng Criteria API,
+  service ghép bằng `Specification.allOf(...)`, repository thực thi `findAll(specification, pageable)`.
+  Không dùng JPQL cho tìm kiếm/phân trang này.
+- `@EntityGraph(category, venue)` tải hai quan hệ to-one cho danh sách và chi tiết.
+  DTO được map bên trong service `@Transactional(readOnly = true)`, không phụ thuộc Open Session in View.
+- `Event.ticketTypes` là collection LAZY có `@BatchSize(size = 50)`; chi tiết tải collection riêng.
+  Batch loading hữu ích khi nhiều event trong cùng persistence context cần đọc collection.
+  Không fetch join collection vào truy vấn phân trang, tránh nhân bản dòng/phân trang trong bộ nhớ.
+- Theo thiết kế, danh sách cần một query dữ liệu và có thể thêm một query count; chi tiết cần query event
+  (có category/venue) và query ticket types. Đây là số query dự kiến, chưa đo trên MySQL runtime.
+
+Để quan sát khi demo local, bật `spring.jpa.show-sql=true` và
+`spring.jpa.properties.hibernate.format_sql=true`, chuẩn bị nhiều sự kiện có category/venue khác nhau.
+So sánh trên branch demo khi tạm bỏ EntityGraph: mapping DTO sẽ gây thêm query category/venue theo từng ID;
+sau đó khôi phục EntityGraph. Với BatchSize, so sánh khi đọc ticketTypes của nhiều event trong cùng transaction.
+Không giữ phiên bản gây N+1 trong luồng API chính.

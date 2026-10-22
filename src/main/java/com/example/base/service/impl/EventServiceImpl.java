@@ -7,10 +7,14 @@ import com.example.base.domain.Event;
 import com.example.base.domain.TicketType;
 import com.example.base.domain.User;
 import com.example.base.domain.Venue;
+import com.example.base.domain.enums.EventStatus;
 import com.example.base.dto.common.PageResponse;
+import com.example.base.dto.event.EventDetailResponse;
+import com.example.base.dto.event.EventFilterRequest;
 import com.example.base.dto.event.EventRequest;
 import com.example.base.dto.event.EventResponse;
 import com.example.base.dto.event.EventStatusRequest;
+import com.example.base.dto.event.EventSummaryResponse;
 import com.example.base.exception.AppException;
 import com.example.base.exception.CatalogErrorCode;
 import com.example.base.exception.EventErrorCode;
@@ -20,10 +24,12 @@ import com.example.base.repository.EventRepository;
 import com.example.base.repository.TicketTypeRepository;
 import com.example.base.repository.UserRepository;
 import com.example.base.repository.VenueRepository;
+import com.example.base.repository.specification.EventSpecifications;
 import com.example.base.service.EventService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +43,29 @@ public class EventServiceImpl implements EventService {
 	private final VenueRepository venueRepository;
 	private final UserRepository userRepository;
 	private final TicketTypeRepository ticketTypeRepository;
+
+	@Override
+	public PageResponse<EventSummaryResponse> listPublic(EventFilterRequest filter, Pageable pageable) {
+		if (filter.from() != null && filter.to() != null && !filter.from().isBefore(filter.to())) {
+			throw new AppException(EventErrorCode.INVALID_EVENT_FILTER_TIME);
+		}
+		Specification<Event> specification = Specification.allOf(
+				EventSpecifications.statusIs(EventStatus.PUBLISHED),
+				EventSpecifications.categoryId(filter.categoryId()),
+				EventSpecifications.city(filter.city()),
+				EventSpecifications.startFrom(filter.from()),
+				EventSpecifications.startTo(filter.to()));
+
+		return PageResponse.from(eventRepository.findAll(specification, pageable).map(EventSummaryResponse::from));
+	}
+
+	@Override
+	public EventDetailResponse getPublic(Long eventId) {
+		Event event = eventRepository.findByIdAndStatus(eventId, EventStatus.PUBLISHED)
+				.orElseThrow(() -> new AppException(EventErrorCode.EVENT_NOT_FOUND));
+
+		return EventDetailResponse.from(event);
+	}
 
 	@Override
 	public PageResponse<EventResponse> listOwn(Long organizerId, Pageable pageable) {

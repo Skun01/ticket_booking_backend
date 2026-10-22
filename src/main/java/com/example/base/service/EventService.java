@@ -1,13 +1,20 @@
 package com.example.base.service;
 
 import com.example.base.dto.common.PageResponse;
+import com.example.base.dto.event.EventDetailResponse;
+import com.example.base.dto.event.EventFilterRequest;
 import com.example.base.dto.event.EventRequest;
 import com.example.base.dto.event.EventResponse;
 import com.example.base.dto.event.EventStatusRequest;
+import com.example.base.dto.event.EventSummaryResponse;
 
 import org.springframework.data.domain.Pageable;
 
 public interface EventService {
+
+	PageResponse<EventSummaryResponse> listPublic(EventFilterRequest filter, Pageable pageable);
+
+	EventDetailResponse getPublic(Long eventId);
 
 	PageResponse<EventResponse> listOwn(Long organizerId, Pageable pageable);
 

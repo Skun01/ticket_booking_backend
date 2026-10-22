@@ -1,6 +1,8 @@
 package com.example.base.domain;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.base.domain.enums.EventStatus;
 import com.example.base.exception.AppException;
@@ -12,10 +14,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -53,6 +58,11 @@ public class Event extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
 	private EventStatus status;
+
+	@OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+	@OrderBy("id ASC")
+	@BatchSize(size = 50)
+	private List<TicketType> ticketTypes = new ArrayList<>();
 
 	public Event(User organizer, Category category, Venue venue, String title, String description,
 			String bannerUrl, Instant startTime, Instant endTime) {

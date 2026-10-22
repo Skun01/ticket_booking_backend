@@ -85,15 +85,23 @@ Quy tắc triển khai Phase 2:
 ## Phase 3 — Public API xem sự kiện (`p3-public-events`) — **Specification + phân trang**
 
 1. `EventRepository extends JpaRepository<Event,Long>, JpaSpecificationExecutor<Event>`.
-2. `spec/EventSpecifications`: static method build `Specification<Event>`:
+2. `repository/specification/EventSpecifications`: static method build `Specification<Event>`:
    - `statusIs(PUBLISHED)` (public chỉ thấy PUBLISHED)
    - `categoryId(Long)`, `city(String)`, `startFrom(Instant)`, `startTo(Instant)`
    - kết hợp bằng `Specification.allOf(...)` theo filter có mặt.
-3. `GET /api/events?categoryId=&city=&from=&to=&page=&size=` → `findAll(spec, pageable)` trả `Page<EventSummaryResponse>`.
+3. `GET /api/events?categoryId=&city=&from=&to=&page=&size=` → `findAll(spec, pageable)`, map sang `PageResponse<EventSummaryResponse>` theo format phân trang Phase 2.
 4. `GET /api/events/{id}`: trả chi tiết + list ticket type kèm **số vé còn lại** (`totalQuantity - soldQuantity`).
-5. **N+1**: `GET /api/events/{id}` và listing join `category/venue` bằng `@EntityGraph`; collection `ticketTypes` thêm `@BatchSize`. (Tái hiện N+1 trước rồi tối ưu để demo.)
+5. **N+1**: `GET /api/events/{id}` và listing fetch `category/venue` bằng `@EntityGraph`;
+   collection `ticketTypes` LAZY có `@BatchSize(size = 50)`, tải riêng khi map chi tiết.
+   Không fetch collection trong query phân trang. README có hướng dẫn so sánh N+1 trên branch demo.
+6. Chỉ mở public `GET /api/events` và `GET /api/events/{id}`; cả hai chỉ trả `PUBLISHED`.
+   Sự kiện không tồn tại hoặc không public trả `404`. Không mở public các HTTP method khác.
+7. `city` so khớp đầy đủ không phân biệt hoa/thường; khoảng `startTime` là `[from, to)`.
+   `page >= 0`, `size` từ 1 đến 100, thứ tự `startTime ASC, id ASC`.
 
-**Done khi:** filter + phân trang chạy qua Specification; không còn N+1 ở màn chi tiết.
+**Done khi:** filter + phân trang dùng Specification, DTO được map trong transaction;
+fetch strategy ngăn N+1 cho category/venue và không fetch collection khi phân trang.
+Số query thực tế cần xác minh trên MySQL khi chạy demo; không xem compile là xác nhận hiệu năng runtime.
 
 ---
 
