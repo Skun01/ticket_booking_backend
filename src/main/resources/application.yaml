@@ -15,6 +15,25 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    listener:
+      simple:
+        acknowledge-mode: manual
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:false}
 
 app:
   jwt:
@@ -29,6 +48,16 @@ app:
   admin:
     email: ${ADMIN_EMAIL:admin@example.com}
     password: ${ADMIN_PASSWORD:admin12345}
+  order:
+    hold-minutes: ${ORDER_HOLD_MINUTES:15}
+  mail-sender:
+    from: ${MAIL_FROM:no-reply@sportslot.local}
+  rabbitmq:
+    exchange: ${RABBITMQ_EXCHANGE:order.exchange}
+    mail-queue: ${RABBITMQ_MAIL_QUEUE:mail.queue}
+    log-queue: ${RABBITMQ_LOG_QUEUE:log.queue}
+    routing-key-paid: order.paid
+    routing-key-cancelled: order.cancelled
 
 springdoc:
   swagger-ui:

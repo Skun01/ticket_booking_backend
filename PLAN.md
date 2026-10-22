@@ -1,0 +1,191 @@
+# Kế hoạch triển khai - Hệ thống bán vé sự kiện
+
+> Nền tảng: base project Spring Boot 4.1 (Java 17, Maven, MySQL, Liquibase, Spring Security OAuth2 Resource Server JWT HS256).
+> Quyết định chốt: **giữ MySQL** (không đổi SQL Server), **giữ prefix `/api`**, **phân trang dùng JPA Specification** (không dùng JPQL).
+
+## Khác biệt so với plan gốc (đã điều chỉnh)
+
+| Hạng mục | Plan gốc | Thực hiện ở project này |
+|---|---|---|
+| Database | SQL Server | **MySQL** (giữ nguyên hạ tầng base) |
+| Stored Procedure | `sp_revenue_report(@from,@to)` T-SQL | MySQL procedure `sp_revenue_report(IN p_from, IN p_to)` |
+| Phân trang sự kiện | JPQL | **JPA Specification** + `Pageable` |
+| Prefix endpoint | `/auth`, `/orders`... | `/api/auth`, `/api/orders`... |
+| Role | USER/ADMIN | **ADMIN / ORGANIZER / CUSTOMER** |
+
+Những phần còn lại (RabbitMQ, Jasper, native query, EntityManager, transaction, N+1, conditional update trừ kho) giữ đúng ý đồ plan gốc.
+
+## Trạng thái hiện tại của base
+
+- Đã có: `User`, `RefreshToken`, auth JWT + refresh cookie rotate, `GlobalExceptionHandler` (ProblemDetail + `code`), CORS, Swagger, Liquibase (changeset 001-003), `AdminAccountInitializer`.
+- Role hiện tại chỉ `USER/ADMIN`; `User` chưa có `phone`, `status`; cột mật khẩu tên `password`.
+- Kiến trúc: package theo layer, `service/` interface + `service/impl/`, DTO `record`, lỗi qua `AppException(<Feature>ErrorCode.X)`.
+
+---
+
+## Phase 0 — Nền tảng (`p0-foundation`)
+
+**Mục tiêu:** chuẩn bị hạ tầng trước khi xây feature.
+
+1. `pom.xml` thêm dependency:
+   - `spring-boot-starter-amqp` (RabbitMQ)
+   - `spring-boot-starter-mail` (gửi email)
+   - `jasperreports` (JasperReports, bản tương thích Java 17)
+   - `com.google.zxing:core` + `javase` (sinh QR)
+2. Đổi `domain/enums/Role.java`: `ADMIN, ORGANIZER, CUSTOMER`.
+3. `application.yaml`: thêm block `spring.rabbitmq.*`, `spring.mail.*`; thêm `app.order.hold-minutes: 15`, `app.rabbitmq.*` (exchange/queue/routing key), `app.mail.from`.
+4. Cập nhật `SecurityConfig` role mapping cho 3 role; `AdminAccountInitializer` tạo admin role `ADMIN`.
+5. Tạo `config/RabbitConfig` (khai báo `TopicExchange`, 2 `Queue`, binding, `Jackson2JsonMessageConverter`, `RabbitTemplate`).
+6. Properties record trong `config/property/`: `RabbitProperties`, `MailProperties`, `OrderProperties`.
+
+**Done khi:** project compile, app khởi động (có MySQL + RabbitMQ), role mới áp dụng.
+
+---
+
+## Phase 1 — Auth + phân quyền 3 role (`p1-auth`)
+
+1. `User`: thêm `phone` (nullable), `status` (enum `UserStatus`: ACTIVE/LOCKED), method nghiệp vụ `lock()/activate()`. Liquibase changeset `004-alter-users-add-phone-status.yaml` (và cột role đã có value mới).
+2. `RegisterRequest`/`AuthServiceImpl`: user đăng ký mặc định role `CUSTOMER`.
+3. Endpoint giữ chuẩn base: `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me` (đã có `/api/users/me` — bổ sung alias `/api/auth/me` trả `UserResponse`).
+4. Annotation phân quyền: thêm `@IsOrganizer`, `@IsCustomer` (giống `@IsAdmin`) hoặc dùng `@PreAuthorize("hasRole('...')")` trực tiếp.
+5. `SecurityConfig`: `/api/auth/**` public; còn lại yêu cầu JWT; phân quyền chi tiết bằng `@PreAuthorize` ở controller.
+
+**Done khi:** đăng ký ra CUSTOMER, login lấy token, 3 role truy cập đúng vùng.
+
+---
+
+## Phase 2 — CRUD category / venue / event / ticket-type (`p2-catalog`)
+
+Entity (không setter, đổi trạng thái qua method; `@ManyToOne` LAZY):
+
+- `Category(name, slug)` — changeset 005
+- `Venue(name, address, city, capacity)` — changeset 006
+- `Event(organizer→User, category, venue, title, description, bannerUrl, startTime, endTime, status)` với `EventStatus` DRAFT/PUBLISHED/CANCELLED/ENDED; method `publish()/cancel()/end()` — changeset 007 (index `events(status, start_time)`)
+- `TicketType(event, name, price, totalQuantity, soldQuantity, maxPerOrder, saleStart, saleEnd)`; method `increaseSold(qty)/releaseSold(qty)` — changeset 008
+
+Endpoint:
+- Admin: `POST/PUT/DELETE /api/admin/categories`, `/api/admin/venues` (`@PreAuthorize hasRole('ADMIN')`)
+- Organizer: `POST /api/organizer/events`, `PUT /api/organizer/events/{id}`, `PATCH /api/organizer/events/{id}/status`; `POST /api/organizer/events/{id}/ticket-types`, `PUT /api/ticket-types/{id}` (chỉ owner mới sửa event của mình)
+
+DTO request/response `record`; mapping `Response.from(entity)`. ErrorCode riêng: `EventErrorCode`, `TicketTypeErrorCode`, `CatalogErrorCode`.
+
+**Done khi:** organizer tạo được event + ticket type; admin quản lý category/venue.
+
+---
+
+## Phase 3 — Public API xem sự kiện (`p3-public-events`) — **Specification + phân trang**
+
+1. `EventRepository extends JpaRepository<Event,Long>, JpaSpecificationExecutor<Event>`.
+2. `spec/EventSpecifications`: static method build `Specification<Event>`:
+   - `statusIs(PUBLISHED)` (public chỉ thấy PUBLISHED)
+   - `categoryId(Long)`, `city(String)`, `startFrom(Instant)`, `startTo(Instant)`
+   - kết hợp bằng `Specification.allOf(...)` theo filter có mặt.
+3. `GET /api/events?categoryId=&city=&from=&to=&page=&size=` → `findAll(spec, pageable)` trả `Page<EventSummaryResponse>`.
+4. `GET /api/events/{id}`: trả chi tiết + list ticket type kèm **số vé còn lại** (`totalQuantity - soldQuantity`).
+5. **N+1**: `GET /api/events/{id}` và listing join `category/venue` bằng `@EntityGraph`; collection `ticketTypes` thêm `@BatchSize`. (Tái hiện N+1 trước rồi tối ưu để demo.)
+
+**Done khi:** filter + phân trang chạy qua Specification; không còn N+1 ở màn chi tiết.
+
+---
+
+## Phase 4 — Luồng đặt vé + thanh toán + hết hạn (`p4-order-flow`) — phần khó nhất
+
+Entity + changeset 009-012 (+ index `orders(user_id,created_at)`, `orders(status,expires_at)`, `tickets(ticket_code)`):
+- `Order(orderCode, user, promoCode?, totalAmount, discountAmount, status, expiresAt)` — `OrderStatus` PENDING/PAID/CANCELLED/EXPIRED; method `markPaid()/cancel()/expire()`
+- `OrderItem(order, ticketType, quantity, unitPrice)`
+- `Ticket(orderItem, ticketCode, status, checkedInAt)` — `TicketStatus` VALID/USED/CANCELLED; method `use()`
+- `Payment(order, method, amount, status, transactionRef, paidAt)` — `PaymentStatus` SUCCESS/FAILED
+
+Luồng:
+1. `POST /api/orders` `{ticketTypeId, quantity}` (CUSTOMER), `@Transactional` (REQUIRED):
+   - Trừ kho bằng **conditional update** trong repository:
+     `UPDATE ticket_types SET sold_quantity = sold_quantity + :qty WHERE id = :id AND sold_quantity + :qty <= total_quantity` → `@Modifying @Query(nativeQuery)`.
+   - Rows affected = 0 → `throw AppException(OrderErrorCode.SOLD_OUT)` → **409**.
+   - Tạo `Order` PENDING, `expiresAt = now + app.order.hold-minutes`, `OrderItem` lưu `unitPrice` tại thời điểm mua. Trả **201**.
+2. `POST /api/orders/{id}/pay`: giả lập cổng thanh toán → `Order.markPaid()`, sinh `Ticket` theo tổng quantity, tạo `Payment(SUCCESS)`, **publish message `order.paid`** vào RabbitMQ.
+   - Payment lỗi: ghi `Payment(FAILED)` bằng `REQUIRES_NEW` để không mất bản ghi khi rollback đơn.
+3. `POST /api/orders/{id}/cancel`: `Order.cancel()`, trả kho `releaseSold`, publish `order.cancelled`.
+4. `GET /api/orders/my`, `GET /api/orders/{id}` (owner), `GET /api/tickets/my`.
+5. `POST /api/organizer/checkin` `{ticketCode}`: VALID→USED (`Ticket.use()`), set `checkedInAt`.
+6. Job `@Scheduled(fixedRate = 60s)` `OrderExpiryJob`: query `orders(status=PENDING, expiresAt<now)` → `expire()` + trả `sold_quantity`.
+
+Điểm giảng dạy cần demo (comment giải thích "tại sao"):
+- **Dirty checking**: đổi `order.status` trong transaction không gọi `save()`.
+- **Self-invocation**: cố ý gọi method `@Transactional` trong cùng class để thấy không có transaction, rồi tách sang bean khác.
+- **REQUIRES_NEW** cho payment FAILED / activity log.
+
+**Done khi:** đặt vé chống được race (2 người mua vé cuối), pay sinh vé, job hủy đơn hết hạn trả kho.
+
+---
+
+## Phase 5 — RabbitMQ: mail + activity log (`p5-rabbitmq`)
+
+1. `activity_logs` entity + changeset 013 (`userId, action, entityType, entityId, detail, createdAt`).
+2. Topic exchange; routing key `order.paid`, `order.cancelled`; queue `mail.queue` (binding `order.paid`) + `log.queue` (binding `order.#`).
+3. `notification/`:
+   - `OrderEventPublisher` dùng `RabbitTemplate` gửi message khi pay/cancel.
+   - `MailListener` `@RabbitListener(queues=mail.queue)`: gửi email vé (đính kèm PDF ở Phase 7), ACK thủ công/manual.
+   - `ActivityLogListener` `@RabbitListener(queues=log.queue)`: ghi `activity_logs` (dùng `REQUIRES_NEW`).
+4. Message DTO (record) serialize JSON (`Jackson2JsonMessageConverter`).
+
+**Done khi:** pay/cancel đẩy message; consumer ghi log + gửi mail (mail có thể dùng MailHog/greenmail khi demo).
+
+---
+
+## Phase 6 — Native query, Stored Procedure, EntityManager (`p6-reports`)
+
+1. **Native query** (`@Query(nativeQuery=true)`): doanh thu theo ngày, top sự kiện bán chạy.
+2. **Stored Procedure** MySQL `sp_revenue_report(IN p_from DATETIME, IN p_to DATETIME)` — tạo bằng changeset 014 (Liquibase `<sql>` hoặc `createProcedure`). Gọi qua `@Procedure` hoặc `entityManager.createStoredProcedureQuery(...)`.
+3. **EntityManager**: một service báo cáo dùng `createNativeQuery`; một chỗ demo `persist/merge/flush/clear`.
+4. Endpoint:
+   - `GET /api/organizer/events/{id}/report`: doanh thu + số vé bán (owner).
+   - `GET /api/admin/reports/revenue?from=&to=`: gọi stored procedure (ADMIN).
+
+**Done khi:** 3 kiểu truy vấn chạy, report trả số liệu đúng.
+
+---
+
+## Phase 7 — Jasper: vé PDF có QR + báo cáo doanh thu PDF (`p7-jasper`)
+
+1. Thêm `.jrxml` trong `src/main/resources/reports/`:
+   - `ticket.jrxml`: Title + Detail + Image (QR) + Parameters (tên sự kiện, mã vé).
+   - `revenue.jrxml`: Fields + band Summary tính tổng.
+2. `util/QrCodeGenerator` (zxing) sinh ảnh QR từ `ticketCode`.
+3. `service/report` compile + fill Jasper, export PDF (byte[]).
+4. Endpoint:
+   - `GET /api/tickets/{id}/pdf` (owner): vé PDF có QR.
+   - `GET /api/organizer/events/{id}/report/pdf` (owner): báo cáo doanh thu PDF.
+5. `MailListener` đính kèm vé PDF vào email.
+
+**Done khi:** tải được PDF vé (QR quét ra ticketCode) và PDF báo cáo.
+
+---
+
+## Phase 8 — Dọn code & chuẩn bị demo (`p8-polish`)
+
+- Rà soát quy ước AGENTS.md (indent tab, import nhóm, comment tiếng Việt giải thích "tại sao", DTO record, entity không setter).
+- Bỏ comment thừa, kiểm tra build `./mvnw -q -DskipTests package`.
+- Cập nhật README: bảng endpoint đầy đủ, biến môi trường (RabbitMQ, mail), hướng dẫn chạy MailHog.
+- Git: mỗi phase một branch feature, commit message rõ ràng, không push thẳng main.
+
+---
+
+## Bản đồ đối chiếu kiến thức training
+
+| Kiến thức | Thực hiện ở |
+|---|---|
+| Controller→Service→Repository, DTO record | Mọi phase |
+| Status code 201/400/401/403/404/409 | Phase 4 (409 hết vé) |
+| `@Configuration/@Bean` (PasswordEncoder, RabbitTemplate, JWT) | Phase 0, base |
+| LAZY/EAGER, N+1, `@EntityGraph`, `@BatchSize` | Phase 3 |
+| **Specification** + Pageable (thay JPQL) | Phase 3 |
+| Native Query | Phase 6 |
+| Stored Procedure (`@Procedure`) | Phase 6 |
+| EntityManager (nativeQuery, persist/merge/flush/clear) | Phase 6 |
+| Dirty checking | Phase 4 |
+| `@Transactional` REQUIRED / REQUIRES_NEW / self-invocation | Phase 4 |
+| RabbitMQ Topic, ACK, email bất đồng bộ | Phase 5 |
+| Jasper (QR, Summary band) | Phase 7 |
+| Git feature branch | Phase 8 |
+
+> **Lưu ý test:** theo AGENTS.md, mặc định KHÔNG viết test khi develop; chỉ dùng compile/build để kiểm tra nhanh. Chỉ viết test khi được yêu cầu rõ ràng.

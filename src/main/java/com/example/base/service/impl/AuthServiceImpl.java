@@ -34,8 +34,9 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	@Transactional
 	public AuthTokens register(RegisterRequest request) {
+		// user tự đăng ký luôn là khách hàng; organizer/admin do admin cấp
 		User user = userService.create(request.email(), request.password(),
-				request.fullName(), Role.USER);
+				request.fullName(), Role.CUSTOMER);
 
 		return issueTokens(user);
 	}

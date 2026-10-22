@@ -65,3 +65,9 @@ File này có hai phần. **Phần BASE** là quy ước của base project, đ�
 - `service/` chứa toàn bộ interface nghiệp vụ (`AuthService`, `TokenService`, `UserService`...).
 - Các lớp triển khai service nằm trong `service/impl`, có hậu tố `Impl`; đặt `@Service` và các annotation `@Transactional` trên phần triển khai, không trên interface.
 - Controller và các lớp sử dụng service inject qua interface.
+
+## Viết test
+
+- **Mặc định KHÔNG viết test khi develop.** Khi thêm/sửa feature, chỉ viết code nghiệp vụ, không tự tạo hay cập nhật file test.
+- Chỉ viết test khi được yêu cầu rõ ràng. Khi đó mới tạo/sửa test tương ứng.
+- Không chủ động chạy `./mvnw test` để "xác minh" trừ khi được yêu cầu; dùng compile/build nếu cần kiểm tra nhanh.
