@@ -1,0 +1,77 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009-create-orders-table
+      author: init
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_code
+                  type: VARCHAR(40)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_orders_user
+                    references: users(id)
+              - column:
+                  name: promo_code
+                  type: VARCHAR(50)
+              - column:
+                  name: total_amount
+                  type: DECIMAL(16, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: discount_amount
+                  type: DECIMAL(16, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expires_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_user_created
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: created_at
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_status_expires
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: expires_at

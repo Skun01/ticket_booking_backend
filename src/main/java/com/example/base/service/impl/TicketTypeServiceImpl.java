@@ -15,6 +15,7 @@ import com.example.base.service.TicketTypeService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -48,11 +49,14 @@ public class TicketTypeServiceImpl implements TicketTypeService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(isolation = Isolation.READ_COMMITTED)
 	public TicketTypeResponse update(Long organizerId, Long ticketTypeId, TicketTypeRequest request) {
+		Long eventId = ticketTypeRepository.findEventIdById(ticketTypeId)
+				.orElseThrow(() -> new AppException(TicketTypeErrorCode.TICKET_TYPE_NOT_FOUND));
+		// Khóa event trước ticket type, cùng thứ tự với luồng giữ kho để tránh deadlock.
+		Event event = findLockedOwnEvent(organizerId, eventId);
 		TicketType ticketType = ticketTypeRepository.findLockedById(ticketTypeId)
 				.orElseThrow(() -> new AppException(TicketTypeErrorCode.TICKET_TYPE_NOT_FOUND));
-		Event event = findLockedOwnEvent(organizerId, ticketType.getEvent().getId());
 		validateQuantity(event, ticketTypeId, request);
 		ticketType.update(request.name().trim(), request.price(), request.totalQuantity(), request.maxPerOrder(),
 				request.saleStart(), request.saleEnd());

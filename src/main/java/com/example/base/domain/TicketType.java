@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 import com.example.base.exception.AppException;
+import com.example.base.exception.OrderErrorCode;
 import com.example.base.exception.TicketTypeErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -70,6 +71,17 @@ public class TicketType extends BaseEntity {
 				|| saleEnd != null && saleEnd.isAfter(eventStart)
 				|| saleStart != null && saleEnd != null && !saleEnd.isAfter(saleStart)) {
 			throw new AppException(TicketTypeErrorCode.INVALID_SALE_TIME);
+		}
+	}
+
+	public void requireBookable(int quantity, Instant now) {
+		event.requireBookable(now);
+		if (quantity < 1 || quantity > 100 || quantity > maxPerOrder) {
+			throw new AppException(OrderErrorCode.INVALID_ORDER_QUANTITY);
+		}
+		if (saleStart != null && now.isBefore(saleStart)
+				|| saleEnd != null && !now.isBefore(saleEnd)) {
+			throw new AppException(OrderErrorCode.SALE_NOT_OPEN);
 		}
 	}
 

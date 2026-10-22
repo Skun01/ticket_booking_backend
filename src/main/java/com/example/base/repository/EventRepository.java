@@ -30,6 +30,9 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	Optional<Event> findLockedById(Long id);
 
+	@Lock(LockModeType.PESSIMISTIC_READ)
+	Optional<Event> findBookingById(Long id);
+
 	boolean existsByCategoryId(Long categoryId);
 
 	boolean existsByVenueId(Long venueId);

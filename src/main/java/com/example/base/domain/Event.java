@@ -7,6 +7,7 @@ import java.util.List;
 import com.example.base.domain.enums.EventStatus;
 import com.example.base.exception.AppException;
 import com.example.base.exception.EventErrorCode;
+import com.example.base.exception.OrderErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -106,6 +107,12 @@ public class Event extends BaseEntity {
 			throw new AppException(EventErrorCode.INVALID_STATUS_TRANSITION);
 		}
 		this.status = EventStatus.ENDED;
+	}
+
+	public void requireBookable(Instant now) {
+		if (status != EventStatus.PUBLISHED || !startTime.isAfter(now)) {
+			throw new AppException(OrderErrorCode.EVENT_NOT_BOOKABLE);
+		}
 	}
 
 	public void requireDraft() {

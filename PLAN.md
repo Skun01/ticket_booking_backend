@@ -118,20 +118,45 @@ Luồng:
    - Trừ kho bằng **conditional update** trong repository:
      `UPDATE ticket_types SET sold_quantity = sold_quantity + :qty WHERE id = :id AND sold_quantity + :qty <= total_quantity` → `@Modifying @Query(nativeQuery)`.
    - Rows affected = 0 → `throw AppException(OrderErrorCode.SOLD_OUT)` → **409**.
-   - Tạo `Order` PENDING, `expiresAt = now + app.order.hold-minutes`, `OrderItem` lưu `unitPrice` tại thời điểm mua. Trả **201**.
+   - Tạo `Order` PENDING, `expiresAt = min(now + app.order.hold-minutes, event.startTime)`,
+     `OrderItem` lưu `unitPrice` tại thời điểm mua. Trả **201**.
 2. `POST /api/orders/{id}/pay`: giả lập cổng thanh toán → `Order.markPaid()`, sinh `Ticket` theo tổng quantity, tạo `Payment(SUCCESS)`, **publish message `order.paid`** vào RabbitMQ.
    - Payment lỗi: ghi `Payment(FAILED)` bằng `REQUIRES_NEW` để không mất bản ghi khi rollback đơn.
 3. `POST /api/orders/{id}/cancel`: `Order.cancel()`, trả kho `releaseSold`, publish `order.cancelled`.
 4. `GET /api/orders/my`, `GET /api/orders/{id}` (owner), `GET /api/tickets/my`.
 5. `POST /api/organizer/checkin` `{ticketCode}`: VALID→USED (`Ticket.use()`), set `checkedInAt`.
-6. Job `@Scheduled(fixedRate = 60s)` `OrderExpiryJob`: query `orders(status=PENDING, expiresAt<now)` → `expire()` + trả `sold_quantity`.
+6. Job `@Scheduled(fixedRate = 60s)` `OrderExpiryJob`: query `orders(status=PENDING, expiresAt<=now)`
+   lấy tối đa 100 ứng viên, gọi bean `OrderExpiryService` để mỗi đơn có transaction riêng → `expire()` + trả kho.
 
 Điểm giảng dạy cần demo (comment giải thích "tại sao"):
 - **Dirty checking**: đổi `order.status` trong transaction không gọi `save()`.
-- **Self-invocation**: cố ý gọi method `@Transactional` trong cùng class để thấy không có transaction, rồi tách sang bean khác.
+- **Self-invocation**: README hướng dẫn tái hiện trên branch demo rồi khôi phục bean khác;
+  code chạy chính không cố ý chứa lỗi transaction.
 - **REQUIRES_NEW** cho payment FAILED / activity log.
 
-**Done khi:** đặt vé chống được race (2 người mua vé cuối), pay sinh vé, job hủy đơn hết hạn trả kho.
+Quy tắc triển khai Phase 4:
+- Mỗi đơn mua một hạng vé, từ 1 đến 100 vé và không vượt `maxPerOrder`.
+  Chỉ mua trước `startTime`, trong `[saleStart, saleEnd)` nếu có giới hạn và event đang `PUBLISHED`.
+- `soldQuantity` gồm vé giữ chỗ và đã thanh toán; pay không trừ kho thêm.
+  Pay/cancel/expire khóa hàng order và kiểm tra trạng thái lại; check-in khóa hàng ticket.
+- Pay `PAID` và cancel `CANCELLED`/`EXPIRED` là idempotent. Chưa có idempotency key cho create.
+- MOCK là phương thức duy nhất; pay không body mặc định thành công, hoặc gửi `simulateFailure=true` để demo lỗi.
+  Failure rollback trước, facade không giữ transaction rồi gọi `PaymentAuditService` (`REQUIRES_NEW`)
+  để tránh kiểm tra FK chờ khóa order của transaction cha.
+- Đơn đến hạn được expire/trả kho ngay khi gọi pay/cancel; pay trả `409 ORDER_EXPIRED` bằng ngoại lệ riêng
+  `noRollbackFor` để không rollback phần expire. Các lỗi khác vẫn rollback bình thường.
+- Booking/pay/check-in giữ khóa chia sẻ event để chặn race với đổi trạng thái event.
+  Cấu hình và booking cùng thứ tự khóa event → ticket type; đọc cấu hình sau khi chờ khóa dùng `READ_COMMITTED`.
+- `OrderEventPublisher` gửi RabbitMQ bằng listener AFTER_COMMIT, best effort;
+  chưa có outbox/confirm/retry bền vững. Consumer mail/log để Phase 5.
+- Check-in chỉ owner event, ticket VALID, đơn PAID, event PUBLISHED và chưa hết `endTime`.
+  Cho phép check-in trước `startTime`; chưa triển khai refund khi cancel event hay cancel đơn PAID.
+- Cột `promoCode` dự phòng, discount bằng 0; chưa triển khai chương trình khuyến mãi.
+
+**Done khi:** triển khai đủ luồng và compile không test thành công.
+Checklist runtime race mua vé cuối, pay/cancel/expire đồng thời, quét vé đồng thời,
+rollback payment FAILED và đối chiếu migration phải chạy trên MySQL khi demo;
+không coi compile là bằng chứng các tình huống runtime đã được xác minh.
 
 ---
 
@@ -140,7 +165,7 @@ Luồng:
 1. `activity_logs` entity + changeset 013 (`userId, action, entityType, entityId, detail, createdAt`).
 2. Topic exchange; routing key `order.paid`, `order.cancelled`; queue `mail.queue` (binding `order.paid`) + `log.queue` (binding `order.#`).
 3. `notification/`:
-   - `OrderEventPublisher` dùng `RabbitTemplate` gửi message khi pay/cancel.
+   - Kế thừa `OrderEventPublisher` + `OrderMessage` đã có ở Phase 4, gửi sau commit khi pay/cancel.
    - `MailListener` `@RabbitListener(queues=mail.queue)`: gửi email vé (đính kèm PDF ở Phase 7), ACK thủ công/manual.
    - `ActivityLogListener` `@RabbitListener(queues=log.queue)`: ghi `activity_logs` (dùng `REQUIRES_NEW`).
 4. Message DTO (record) serialize JSON (`Jackson2JsonMessageConverter`).

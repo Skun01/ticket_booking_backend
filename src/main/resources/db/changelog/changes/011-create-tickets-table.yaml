@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 011-create-tickets-table
+      author: init
+      changes:
+        - createTable:
+            tableName: tickets
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_item_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_tickets_order_item
+                    references: order_items(id)
+              - column:
+                  name: ticket_code
+                  type: VARCHAR(40)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: checked_in_at
+                  type: DATETIME(6)
+              - column:
+                  name: created_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: DATETIME(6)
+                  constraints:
+                    nullable: false
