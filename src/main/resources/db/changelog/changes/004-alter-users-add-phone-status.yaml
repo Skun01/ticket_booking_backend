@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-alter-users-add-phone-status
+      author: init
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: phone
+                  type: VARCHAR(20)
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: ACTIVE
+                  constraints:
+                    nullable: false
+        # backfill cho các bản ghi đã có trước khi thêm cột
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: status
+                  value: ACTIVE
+            where: status IS NULL

@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
 	public AuthTokens register(RegisterRequest request) {
 		// user tự đăng ký luôn là khách hàng; organizer/admin do admin cấp
 		User user = userService.create(request.email(), request.password(),
-				request.fullName(), Role.CUSTOMER);
+				request.fullName(), request.phone(), Role.CUSTOMER);
 
 		return issueTokens(user);
 	}

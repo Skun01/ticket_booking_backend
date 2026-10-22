@@ -37,12 +37,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public User create(String email, String rawPassword, String fullName, Role role) {
+	public User create(String email, String rawPassword, String fullName, String phone, Role role) {
 		if (userRepository.existsByEmail(email)) {
 			throw new AppException(UserErrorCode.EMAIL_ALREADY_REGISTERED);
 		}
+		User user = new User(email, passwordEncoder.encode(rawPassword), fullName, role);
+		user.updateProfile(fullName, phone);
 		try {
-			return userRepository.saveAndFlush(new User(email, passwordEncoder.encode(rawPassword), fullName, role));
+			return userRepository.saveAndFlush(user);
 		}
 		catch (DataIntegrityViolationException ex) {
 			throw new AppException(UserErrorCode.EMAIL_ALREADY_REGISTERED);

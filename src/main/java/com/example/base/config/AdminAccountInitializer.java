@@ -28,7 +28,7 @@ public class AdminAccountInitializer implements ApplicationRunner {
 		if (userService.findByEmail(properties.email()).isPresent()) {
 			return;
 		}
-		userService.create(properties.email(), properties.password(), properties.fullName(), Role.ADMIN);
+		userService.create(properties.email(), properties.password(), properties.fullName(), null, Role.ADMIN);
 		log.info("Created admin account {}", properties.email());
 	}
 

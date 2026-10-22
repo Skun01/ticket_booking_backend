@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changes/002-create-refresh-tokens-table.yaml
   - include:
       file: db/changelog/changes/003-add-refresh-tokens-expires-at-index.yaml
+  - include:
+      file: db/changelog/changes/004-alter-users-add-phone-status.yaml
