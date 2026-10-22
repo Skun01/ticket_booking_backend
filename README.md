@@ -283,7 +283,8 @@ Không truyền body khi pay thì mặc định MOCK thành công. Hoặc gửi:
 - `OrderPaymentService` không giữ transaction khi điều phối. Khi MOCK thất bại, transaction `OrderService.pay`
   phải rollback và nhả khóa order trước, rồi mới gọi bean `PaymentAuditService` với `REQUIRES_NEW`.
   Nếu insert FAILED trong transaction con khi cha còn khóa order, kiểm tra FK có thể chờ khóa cha.
-- Job gọi `OrderExpiryService` qua bean Spring khác; không gọi `this.expire()` rồi trông chờ `@Transactional`.
+- Job gọi `OrderService.expire()` qua bean Spring khác để mỗi đơn có transaction riêng;
+  không gọi `this.expire()` rồi trông chờ `@Transactional`.
   Demo self-invocation chỉ làm trên branch demo: chuyển `expire()` vào chính job, gọi nội bộ rồi quan sát
   `TransactionSynchronizationManager.isActualTransactionActive()`; sau đó khôi phục bean riêng.
   Không đưa phiên bản sai này vào API/job chính.

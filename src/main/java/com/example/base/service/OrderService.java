@@ -1,5 +1,8 @@
 package com.example.base.service;
 
+import java.time.Instant;
+import java.util.List;
+
 import com.example.base.dto.common.PageResponse;
 import com.example.base.dto.order.CreateOrderRequest;
 import com.example.base.dto.order.OrderResponse;
@@ -19,5 +22,9 @@ public interface OrderService {
 	PageResponse<OrderSummaryResponse> listOwn(Long customerId, Pageable pageable);
 
 	OrderResponse getOwn(Long customerId, Long orderId);
+
+	List<Long> findExpiredIds(Instant cutoff, int limit);
+
+	boolean expire(Long orderId);
 
 }

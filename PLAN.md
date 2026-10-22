@@ -126,7 +126,7 @@ Luồng:
 4. `GET /api/orders/my`, `GET /api/orders/{id}` (owner), `GET /api/tickets/my`.
 5. `POST /api/organizer/checkin` `{ticketCode}`: VALID→USED (`Ticket.use()`), set `checkedInAt`.
 6. Job `@Scheduled(fixedRate = 60s)` `OrderExpiryJob`: query `orders(status=PENDING, expiresAt<=now)`
-   lấy tối đa 100 ứng viên, gọi bean `OrderExpiryService` để mỗi đơn có transaction riêng → `expire()` + trả kho.
+   lấy tối đa 100 ứng viên, gọi `OrderService.expire()` qua bean Spring để mỗi đơn có transaction riêng + trả kho.
 
 Điểm giảng dạy cần demo (comment giải thích "tại sao"):
 - **Dirty checking**: đổi `order.status` trong transaction không gọi `save()`.

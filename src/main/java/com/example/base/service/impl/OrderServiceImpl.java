@@ -2,6 +2,8 @@ package com.example.base.service.impl;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
+import java.util.List;
 
 import com.example.base.config.property.OrderProperties;
 import com.example.base.domain.Event;
@@ -24,17 +26,19 @@ import com.example.base.exception.EventErrorCode;
 import com.example.base.exception.OrderErrorCode;
 import com.example.base.exception.OrderExpiredException;
 import com.example.base.exception.PaymentDeclinedException;
+import com.example.base.exception.TicketTypeErrorCode;
 import com.example.base.exception.UserErrorCode;
 import com.example.base.repository.EventRepository;
 import com.example.base.repository.OrderRepository;
 import com.example.base.repository.PaymentRepository;
 import com.example.base.repository.TicketRepository;
+import com.example.base.repository.TicketTypeRepository;
 import com.example.base.repository.UserRepository;
 import com.example.base.service.OrderService;
-import com.example.base.service.OrderStockService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -50,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
 	private final EventRepository eventRepository;
 	private final PaymentRepository paymentRepository;
 	private final TicketRepository ticketRepository;
-	private final OrderStockService orderStockService;
+	private final TicketTypeRepository ticketTypeRepository;
 	private final OrderProperties properties;
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -61,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
 				.orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
 		requireActiveCustomer(customer);
 		// READ_COMMITTED giúp đọc cấu hình vé mới nhất sau khi đã lấy khóa event, không dùng snapshot cũ.
-		TicketType ticketType = orderStockService.reserve(request.ticketTypeId(), request.quantity());
+		TicketType ticketType = reserveStock(request.ticketTypeId(), request.quantity());
 		Instant expiresAt = Instant.now().plus(properties.holdMinutes(), ChronoUnit.MINUTES);
 		if (ticketType.getEvent().getStartTime().isBefore(expiresAt)) {
 			expiresAt = ticketType.getEvent().getStartTime();
@@ -120,12 +124,12 @@ public class OrderServiceImpl implements OrderService {
 		order.requirePending();
 		Instant now = Instant.now();
 		if (order.expire(now)) {
-			orderStockService.release(order);
+			releaseStock(order);
 
 			return OrderResponse.from(order);
 		}
 		order.cancel();
-		orderStockService.release(order);
+		releaseStock(order);
 		eventPublisher.publishEvent(OrderMessage.from(order, now));
 
 		return OrderResponse.from(order);
@@ -143,6 +147,51 @@ public class OrderServiceImpl implements OrderService {
 		requireOwner(order, customerId);
 
 		return OrderResponse.from(order);
+	}
+
+	@Override
+	public List<Long> findExpiredIds(Instant cutoff, int limit) {
+		return orderRepository.findByStatusAndExpiresAtLessThanEqualOrderByExpiresAtAscIdAsc(
+				OrderStatus.PENDING, cutoff, PageRequest.of(0, limit)).stream().map(Order::getId).toList();
+	}
+
+	@Override
+	@Transactional
+	public boolean expire(Long orderId) {
+		Order order = orderRepository.findLockedById(orderId).orElse(null);
+		if (order == null || !order.expire(Instant.now())) {
+			return false;
+		}
+		releaseStock(order);
+
+		return true;
+	}
+
+	private TicketType reserveStock(Long ticketTypeId, int quantity) {
+		Long eventId = ticketTypeRepository.findEventIdById(ticketTypeId)
+				.orElseThrow(() -> new AppException(TicketTypeErrorCode.TICKET_TYPE_NOT_FOUND));
+		// Khóa chia sẻ cho phép nhiều khách mua đồng thời nhưng chặn organizer đổi trạng thái giữa chừng.
+		eventRepository.findBookingById(eventId)
+				.orElseThrow(() -> new AppException(EventErrorCode.EVENT_NOT_FOUND));
+		TicketType ticketType = ticketTypeRepository.findById(ticketTypeId)
+				.orElseThrow(() -> new AppException(TicketTypeErrorCode.TICKET_TYPE_NOT_FOUND));
+		ticketType.requireBookable(quantity, Instant.now());
+		if (ticketTypeRepository.reserve(ticketTypeId, quantity) != 1) {
+			throw new AppException(OrderErrorCode.SOLD_OUT);
+		}
+		// Có thể đã chờ khóa kho lâu; kiểm tra lại giờ bán sau UPDATE, sai thì rollback cả lượng giữ.
+		ticketType.requireBookable(quantity, Instant.now());
+
+		return ticketType;
+	}
+
+	private void releaseStock(Order order) {
+		for (OrderItem item : order.getItems().stream()
+				.sorted(Comparator.comparing(value -> value.getTicketType().getId())).toList()) {
+			if (ticketTypeRepository.releaseSold(item.getTicketType().getId(), item.getQuantity()) != 1) {
+				throw new AppException(OrderErrorCode.INVENTORY_CONFLICT);
+			}
+		}
 	}
 
 	private Order findLockedOwn(Long customerId, Long orderId) {
@@ -167,7 +216,7 @@ public class OrderServiceImpl implements OrderService {
 
 	private void expireBeforePayment(Order order, Instant now) {
 		if (order.expire(now)) {
-			orderStockService.release(order);
+			releaseStock(order);
 			// Ngoại lệ này không rollback để trạng thái EXPIRED và lượng kho đã trả vẫn được commit.
 			throw new OrderExpiredException();
 		}
