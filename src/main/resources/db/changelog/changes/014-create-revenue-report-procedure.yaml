@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 014-create-revenue-report-procedure
+      author: init
+      dbms: mysql
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              CREATE PROCEDURE sp_revenue_report(IN p_from DATETIME(6), IN p_to DATETIME(6))
+              READS SQL DATA
+              BEGIN
+                SELECT DATE(p.paid_at) AS revenue_date,
+                       COUNT(DISTINCT p.order_id) AS paid_orders,
+                       SUM(p.amount) AS revenue
+                FROM payments p
+                JOIN orders o ON o.id = p.order_id
+                WHERE p.status = 'SUCCESS' AND o.status = 'PAID'
+                  AND p.paid_at >= p_from AND p.paid_at < p_to
+                GROUP BY DATE(p.paid_at)
+                ORDER BY revenue_date ASC;
+              END
+      rollback:
+        - sql:
+            sql: DROP PROCEDURE sp_revenue_report

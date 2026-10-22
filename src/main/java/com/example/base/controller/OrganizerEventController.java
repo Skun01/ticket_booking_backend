@@ -9,9 +9,11 @@ import com.example.base.dto.common.PageResponse;
 import com.example.base.dto.event.EventRequest;
 import com.example.base.dto.event.EventResponse;
 import com.example.base.dto.event.EventStatusRequest;
+import com.example.base.dto.report.EventReportResponse;
 import com.example.base.dto.ticket.TicketTypeRequest;
 import com.example.base.dto.ticket.TicketTypeResponse;
 import com.example.base.service.EventService;
+import com.example.base.service.ReportService;
 import com.example.base.service.TicketTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -41,6 +43,7 @@ public class OrganizerEventController {
 
 	private final EventService eventService;
 	private final TicketTypeService ticketTypeService;
+	private final ReportService reportService;
 
 	@Operation(summary = "Danh sách sự kiện của tôi")
 	@GetMapping
@@ -55,6 +58,12 @@ public class OrganizerEventController {
 	@GetMapping("/{id}")
 	public EventResponse getById(@CurrentUser Jwt jwt, @PathVariable Long id) {
 		return eventService.getOwn(Long.valueOf(jwt.getSubject()), id);
+	}
+
+	@Operation(summary = "Báo cáo doanh thu và số vé bán của sự kiện")
+	@GetMapping("/{id}/report")
+	public EventReportResponse report(@CurrentUser Jwt jwt, @PathVariable Long id) {
+		return reportService.getEventReport(Long.valueOf(jwt.getSubject()), id);
 	}
 
 	@Operation(summary = "Tạo sự kiện")

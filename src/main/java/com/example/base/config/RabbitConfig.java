@@ -51,15 +51,20 @@ public class RabbitConfig {
 	// mail.queue chỉ nhận message đơn đã thanh toán để gửi vé
 	@Bean
 	Binding mailBinding() {
-		return BindingBuilder.bind(mailQueue()).to(orderExchange()).with(properties.routingKeyPaid());
+		return BindingBuilder.bind(mailQueue())
+			.to(orderExchange())
+			.with(properties.routingKeyPaid());
 	}
 
 	// log.queue nhận mọi sự kiện order.* để ghi activity log
 	@Bean
 	Binding logBinding() {
-		return BindingBuilder.bind(logQueue()).to(orderExchange()).with("order.#");
+		return BindingBuilder.bind(logQueue())
+		.to(orderExchange())
+		.with("order.#");
 	}
 
+	// DLQ
 	@Bean
 	DirectExchange orderDeadLetterExchange() {
 		return new DirectExchange(properties.deadLetterExchange());
@@ -77,21 +82,34 @@ public class RabbitConfig {
 
 	@Bean
 	Binding mailDeadLetterBinding() {
-		return BindingBuilder.bind(mailDeadLetterQueue()).to(orderDeadLetterExchange())
-				.with(properties.mailDeadLetterQueue());
+		return BindingBuilder.bind(mailDeadLetterQueue())
+			.to(orderDeadLetterExchange())
+			.with(properties.mailDeadLetterQueue());
 	}
 
 	@Bean
 	Binding logDeadLetterBinding() {
-		return BindingBuilder.bind(logDeadLetterQueue()).to(orderDeadLetterExchange())
-				.with(properties.logDeadLetterQueue());
+		return BindingBuilder.bind(logDeadLetterQueue())
+			.to(orderDeadLetterExchange())
+			.with(properties.logDeadLetterQueue());
 	}
-
+	
+	// convert data
 	@Bean
 	MessageConverter jsonMessageConverter() {
 		return new JacksonJsonMessageConverter("com.example.base.dto.order");
 	}
 
+	// send message
+	@Bean
+	RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
+		RabbitTemplate template = new RabbitTemplate(connectionFactory);
+		template.setMessageConverter(messageConverter);
+
+		return template;
+	}
+
+	// config retry for consumer
 	@Bean
 	RetryTemplate orderConsumerRetryTemplate() {
 		RetryPolicy policy = RetryPolicy.builder().maxRetries(properties.consumerMaxRetries())
@@ -101,7 +119,7 @@ public class RabbitConfig {
 
 		return new RetryTemplate(policy);
 	}
-
+	
 	@Bean
 	SimpleRabbitListenerContainerFactory orderListenerContainerFactory(
 			SimpleRabbitListenerContainerFactoryConfigurer configurer, ConnectionFactory connectionFactory) {
@@ -129,14 +147,6 @@ public class RabbitConfig {
 		}
 
 		return builder.build();
-	}
-
-	@Bean
-	RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
-		RabbitTemplate template = new RabbitTemplate(connectionFactory);
-		template.setMessageConverter(messageConverter);
-
-		return template;
 	}
 
 }

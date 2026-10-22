@@ -432,3 +432,119 @@ Không tự chuyển DLQ ngược lại queue bằng TTL vì poison message có 
 Chỉ ACK/xóa bản DLQ sau khi xác nhận replay đã được broker nhận và theo dõi kết quả; chưa có API replay trong app.
 
 Các mục trên là hướng dẫn vận hành cần xác minh với MySQL/RabbitMQ/SMTP thực tế, không phải kết quả của compile.
+
+## Báo cáo doanh thu (Phase 6)
+
+Chỉ bổ sung hai API theo plan, không thêm bảng, queue hay cơ chế chạy nền:
+
+| Method | Endpoint | Quyền | Nội dung |
+|---|---|---|---|
+| GET | `/api/organizer/events/{id}/report` | ORGANIZER, owner | Tổng doanh thu, số đơn/vé đã thanh toán và doanh thu theo ngày của sự kiện |
+| GET | `/api/admin/reports/revenue?from=&to=` | ADMIN | Doanh thu toàn hệ thống trong khoảng thời gian, theo ngày và top 10 sự kiện |
+
+### Quy tắc tính số liệu
+
+- Chỉ lấy payment `SUCCESS` thuộc order `PAID`. Payment `FAILED`, đơn PENDING/CANCELLED/EXPIRED không được cộng.
+- Doanh thu lấy từ `payments.amount`, không lấy giá vé hiện tại. Vé bán lấy `order_items.quantity` của đơn đã trả tiền,
+  không dùng `ticket_types.sold_quantity` vì bộ đếm này còn bao gồm đơn giữ chỗ PENDING.
+- Vé đã check-in vẫn là vé bán; event đã ENDED/CANCELLED vẫn có doanh thu nếu đơn còn PAID.
+  Hiện chưa có refund nên báo cáo không tự trừ doanh thu khi hủy event.
+- Organizer xem toàn bộ thời gian của một event. Event không tồn tại trả `404 EVENT_NOT_FOUND`,
+  không phải owner trả `403 EVENT_NOT_OWNED`.
+- Admin bắt buộc có `from`, `to` dạng ISO-8601, ví dụ `2027-06-01T00:00:00Z`.
+  Khoảng lọc theo **paidAt**, quy ước **[from, to)**; `from >= to` trả `400 INVALID_REPORT_RANGE`.
+  Bind tham số `Instant` theo UTC nhất quán với dữ liệu lưu, không phụ thuộc múi giờ JVM.
+- Ngày doanh thu là ngày UTC. Chỉ trả ngày có payment phù hợp, không chèn thêm ngày doanh thu 0.
+  Khi không có dữ liệu: tổng số đơn/vé và doanh thu bằng 0, danh sách rỗng.
+- Top 10 xếp theo số vé bán giảm dần, sau đó doanh thu giảm dần, eventId tăng dần để xử lý đồng hạng.
+  Đây là top trong đúng khoảng `[from, to)`, không phải top theo ngày diễn ra sự kiện.
+- Truy vấn JOIN theo mô hình hiện tại: **mỗi đơn chỉ có một hạng vé**, mỗi đơn thanh toán thành công một lần.
+  Nếu sau này cho mua nhiều hạng vé trong một đơn, cần điều chỉnh cách phân bổ doanh thu trước khi tái dùng query.
+
+### Ba cách truy vấn trong code
+
+1. `PaymentRepository`: `@Query(nativeQuery = true)` cho doanh thu theo ngày của event và top 10 event.
+   Interface projection chỉ dùng để đọc kết quả SQL; controller trả DTO record, không trả entity/proxy.
+2. `ReportServiceImpl.getEventReport`: `EntityManager.createNativeQuery` tính tổng event,
+   kiểm tra owner trước khi truy vấn số liệu.
+3. `ReportServiceImpl.getRevenueReport`: `EntityManager.createStoredProcedureQuery` gọi
+   `sp_revenue_report(IN p_from DATETIME(6), IN p_to DATETIME(6))`, map result set thành DTO theo ngày.
+   Tổng doanh thu/số đơn admin được cộng từ kết quả procedure; danh sách top event dùng native repository.
+
+Liquibase **`014-create-revenue-report-procedure.yaml`** chỉ tạo procedure và có rollback DROP PROCEDURE.
+`splitStatements: false` giữ nguyên thân `BEGIN ... END`; không dùng lệnh client `DELIMITER` trong JDBC.
+Tài khoản chạy migration cần quyền `CREATE ROUTINE`; tài khoản gọi API cần `EXECUTE` procedure cùng quyền đọc
+các bảng liên quan. Cấp quyền trên đúng database khi triển khai, không tự cấp quyền bằng migration này.
+Các API báo cáo chạy trong transaction `readOnly`, không tạo dữ liệu demo hoặc thay đổi đơn/vé.
+
+### Ví dụ gọi API
+
+```bash
+curl -H 'Authorization: Bearer <organizer-token>' \
+  'http://localhost:8080/api/organizer/events/1/report'
+
+curl -G -H 'Authorization: Bearer <admin-token>' \
+  --data-urlencode 'from=2027-06-01T00:00:00Z' \
+  --data-urlencode 'to=2027-07-01T00:00:00Z' \
+  'http://localhost:8080/api/admin/reports/revenue'
+```
+
+Ví dụ cấu trúc response admin (số liệu minh họa):
+
+```json
+{
+  "from":"2027-06-01T00:00:00Z",
+  "to":"2027-07-01T00:00:00Z",
+  "paidOrders":1,
+  "revenue":500000.00,
+  "dailyRevenue":[{"date":"2027-06-15","paidOrders":1,"revenue":500000.00}],
+  "topEvents":[{"eventId":1,"eventTitle":"Đêm nhạc mùa hè","ticketsSold":2,"revenue":500000.00}]
+}
+```
+
+### Demo EntityManager persist / merge / flush / clear
+
+Đây là đoạn demo để chạy thủ công trên branch demo/local với DB development, không gắn vào API báo cáo,
+không thêm bean/bảng chỉ để minh họa. Trong đoạn dưới, `entityManager` và `transactionManager` là bean Spring
+được inject; chạy ngoài transaction báo cáo và không dùng connection độc lập khác.
+
+```java
+String slug = "demo-em-" + UUID.randomUUID();
+TransactionTemplate transaction = new TransactionTemplate(transactionManager);
+transaction.executeWithoutResult(status -> {
+	status.setRollbackOnly();
+	Category category = new Category("Demo persist", slug);
+	entityManager.persist(category);
+	entityManager.flush();
+	entityManager.clear();
+
+	category.update("Demo merge", slug);
+	Category managed = entityManager.merge(category);
+	entityManager.flush();
+	entityManager.clear();
+});
+```
+
+Dùng các import: `java.util.UUID`, `com.example.base.domain.Category`,
+`org.springframework.transaction.support.TransactionTemplate`.
+
+- `persist`: đưa entity mới vào persistence context; với IDENTITY, INSERT có thể chạy ngay để lấy ID.
+- `flush`: đẩy thay đổi xuống DB, **không phải commit**.
+- `clear`: detach toàn bộ entity trong context; vì vậy flush trước để không làm mất thay đổi đang chờ.
+- `merge`: copy trạng thái của entity detached vào entity managed và trả entity managed (`managed`);
+  biến `category` cũ vẫn detached.
+- Transaction được đánh dấu rollback từ đầu nên bản ghi demo không được giữ lại sau khi kết thúc.
+  AUTO_INCREMENT vẫn có thể tăng dù rollback; không chạy demo này trên database production.
+
+### Checklist khi chạy với MySQL
+
+1. Chạy app để Liquibase tạo procedure 014; gọi report bằng role ADMIN/ORGANIZER tương ứng.
+2. Tạo hai đơn: một pay thành công, một MOCK thất bại. Đối chiếu chỉ đơn thành công được cộng.
+3. Tạo thêm đơn PENDING còn giữ kho: số vé bán trên report không tăng theo reservation.
+4. So sánh tổng event với dailyRevenue; tổng admin với kết quả procedure gọi trực tiếp:
+   `CALL sp_revenue_report('2027-06-01 00:00:00', '2027-07-01 00:00:00');`.
+5. Đối chiếu paidAt đúng đầu/cuối khoảng: tính tại from, không tính tại to; thử khoảng không có dữ liệu.
+6. Thử organizer không sở hữu event và CUSTOMER gọi API report: kỳ vọng bị từ chối.
+
+Đây là checklist runtime cần thực hiện trên MySQL, chưa được xác nhận bằng compile hay kiểm tra tĩnh.
+Không tự tạo/chạy test. PDF report thuộc Phase 7.

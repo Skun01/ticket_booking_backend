@@ -203,7 +203,22 @@ cần chạy trên MySQL/RabbitMQ/SMTP khi demo, không coi compile là xác nh�
    - `GET /api/organizer/events/{id}/report`: doanh thu + số vé bán (owner).
    - `GET /api/admin/reports/revenue?from=&to=`: gọi stored procedure (ADMIN).
 
-**Done khi:** 3 kiểu truy vấn chạy, report trả số liệu đúng.
+Phạm vi triển khai:
+- Chỉ hai API ở trên, không thêm bảng/queue hoặc cơ chế chạy nền.
+- Native repository trả doanh thu theo ngày của event và top 10 event theo số vé đã bán.
+- `ReportServiceImpl` dùng EntityManager native để tổng hợp event và
+  `createStoredProcedureQuery` để gọi procedure doanh thu theo ngày toàn hệ thống.
+- Chỉ payment SUCCESS thuộc order PAID được cộng; doanh thu từ payments.amount,
+  số vé từ order_items.quantity, không dùng soldQuantity đang bao gồm reservation.
+- Organizer xem toàn thời gian và phải sở hữu event; admin lọc paidAt trong `[from, to)`, ngày theo UTC.
+  Top event sắp xếp số vé giảm dần, doanh thu giảm dần, eventId tăng dần; giới hạn 10.
+- Query theo mô hình hiện tại mỗi order một hạng vé, một payment thành công.
+- Demo persist/merge/flush/clear đặt trong README, chạy transaction rollback trên branch demo/local,
+  không thêm ghi dữ liệu vào GET báo cáo và không tạo thêm component runtime chỉ để demo.
+
+**Done ở mức code khi:** đủ ba cách truy vấn, hai API, procedure 014 và compile không test thành công.
+Đối chiếu số liệu, biên thời gian UTC, quyền owner/role và chạy procedure thật theo checklist README
+cần xác minh trên MySQL; compile không chứng minh migration hoặc SQL runtime đã chạy đúng.
 
 ---
 
@@ -242,7 +257,7 @@ cần chạy trên MySQL/RabbitMQ/SMTP khi demo, không coi compile là xác nh�
 | LAZY/EAGER, N+1, `@EntityGraph`, `@BatchSize` | Phase 3 |
 | **Specification** + Pageable (thay JPQL) | Phase 3 |
 | Native Query | Phase 6 |
-| Stored Procedure (`@Procedure`) | Phase 6 |
+| Stored Procedure (`EntityManager.createStoredProcedureQuery`) | Phase 6 |
 | EntityManager (nativeQuery, persist/merge/flush/clear) | Phase 6 |
 | Dirty checking | Phase 4 |
 | `@Transactional` REQUIRED / REQUIRES_NEW / self-invocation | Phase 4 |

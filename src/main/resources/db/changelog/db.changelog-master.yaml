@@ -25,3 +25,5 @@ databaseChangeLog:
       file: db/changelog/changes/012-create-payments-table.yaml
   - include:
       file: db/changelog/changes/013-create-notification-tables.yaml
+  - include:
+      file: db/changelog/changes/014-create-revenue-report-procedure.yaml
