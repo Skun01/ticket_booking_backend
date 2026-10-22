@@ -15,6 +15,7 @@ import com.example.base.exception.ReportErrorCode;
 import com.example.base.repository.EventRepository;
 import com.example.base.repository.PaymentRepository;
 import com.example.base.service.ReportService;
+import com.example.base.util.JasperPdfRenderer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureQuery;
@@ -31,6 +32,7 @@ public class ReportServiceImpl implements ReportService {
 	private final EventRepository eventRepository;
 	private final PaymentRepository paymentRepository;
 	private final EntityManager entityManager;
+	private final JasperPdfRenderer pdfRenderer;
 
 	@Override
 	public EventReportResponse getEventReport(Long organizerId, Long eventId) {
@@ -53,6 +55,11 @@ public class ReportServiceImpl implements ReportService {
 
 		return new EventReportResponse(event.getId(), event.getTitle(), ((Number) totals[0]).longValue(),
 				((Number) totals[1]).longValue(), (BigDecimal) totals[2], dailyRevenue);
+	}
+
+	@Override
+	public byte[] getEventReportPdf(Long organizerId, Long eventId) {
+		return pdfRenderer.revenue(getEventReport(organizerId, eventId));
 	}
 
 	@Override

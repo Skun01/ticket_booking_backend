@@ -3,10 +3,13 @@ package com.example.base.notification;
 import com.example.base.config.property.MailProperties;
 import com.example.base.dto.notification.PaidOrderMailData;
 import com.example.base.dto.notification.TicketMailData;
+import com.example.base.util.JasperPdfRenderer;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
 import org.springframework.mail.MailPreparationException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -18,15 +21,21 @@ public class OrderMailSender {
 
 	private final JavaMailSender mailSender;
 	private final MailProperties properties;
+	private final JasperPdfRenderer pdfRenderer;
 
 	public void send(PaidOrderMailData data) {
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 		try {
-			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 			helper.setFrom(properties.from());
 			helper.setTo(data.recipient());
 			helper.setSubject("Sport Slot - Vé đơn " + data.orderCode());
 			helper.setText(body(data), false);
+			for (TicketMailData ticket : data.tickets()) {
+				helper.addAttachment(ticket.ticketCode() + ".pdf",
+					new ByteArrayResource(pdfRenderer.ticket(ticket)), 
+					MediaType.APPLICATION_PDF_VALUE);
+			}
 		}
 		catch (MessagingException ex) {
 			throw new MailPreparationException("Could not prepare order ticket email", ex);

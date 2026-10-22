@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum BookingTicketErrorCode implements ErrorCode {
 
 	TICKET_NOT_FOUND(HttpStatus.NOT_FOUND, "Ticket not found"),
+	TICKET_NOT_OWNED(HttpStatus.FORBIDDEN, "You do not own this ticket"),
 	TICKET_NOT_OWNED_BY_ORGANIZER(HttpStatus.FORBIDDEN, "Ticket belongs to another organizer's event"),
 	TICKET_ALREADY_USED(HttpStatus.CONFLICT, "Ticket has already been checked in"),
 	TICKET_NOT_VALID(HttpStatus.CONFLICT, "Ticket is not valid for check-in"),

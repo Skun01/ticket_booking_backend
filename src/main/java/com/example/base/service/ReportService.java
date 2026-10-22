@@ -9,6 +9,8 @@ public interface ReportService {
 
 	EventReportResponse getEventReport(Long organizerId, Long eventId);
 
+	byte[] getEventReportPdf(Long organizerId, Long eventId);
+
 	RevenueReportResponse getRevenueReport(Instant from, Instant to);
 
 }

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+    http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+  name="revenue" pageWidth="595" pageHeight="842" columnWidth="515"
+  leftMargin="40" rightMargin="40" topMargin="40" bottomMargin="40"
+  whenNoDataType="AllSectionsNoDetail">
+  <style name="Base" isDefault="true" fontName="DejaVu Sans" fontSize="11"/>
+  <parameter name="EVENT_ID" class="java.lang.Long"/>
+  <parameter name="EVENT_TITLE" class="java.lang.String"/>
+  <parameter name="TICKETS_SOLD" class="java.lang.Long"/>
+  <field name="date" class="java.lang.String"/>
+  <field name="paidOrders" class="java.lang.Long"/>
+  <field name="revenue" class="java.math.BigDecimal"/>
+  <variable name="TOTAL_ORDERS" class="java.lang.Long" calculation="Sum">
+    <variableExpression><![CDATA[$F{paidOrders}]]></variableExpression>
+    <initialValueExpression><![CDATA[0L]]></initialValueExpression>
+  </variable>
+  <variable name="TOTAL_REVENUE" class="java.math.BigDecimal" calculation="Sum">
+    <variableExpression><![CDATA[$F{revenue}]]></variableExpression>
+    <initialValueExpression><![CDATA[java.math.BigDecimal.ZERO]]></initialValueExpression>
+  </variable>
+  <title>
+    <band height="180">
+      <staticText>
+        <reportElement x="0" y="0" width="515" height="25"/>
+        <textElement><font size="16" isBold="true"/></textElement>
+        <text><![CDATA[BÁO CÁO DOANH THU SỰ KIỆN]]></text>
+      </staticText>
+      <textField>
+        <reportElement x="0" y="35" width="515" height="95"/>
+        <textElement><font size="14" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[$P{EVENT_TITLE}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="0" y="135" width="515" height="22"/>
+        <textFieldExpression><![CDATA["Mã sự kiện: " + $P{EVENT_ID} + " | Vé đã bán: " + $P{TICKETS_SOLD}]]>
+        </textFieldExpression>
+      </textField>
+      <staticText>
+        <reportElement x="0" y="160" width="515" height="20"/>
+        <textElement><font size="9"/></textElement>
+        <text><![CDATA[Toàn thời gian, theo ngày thanh toán UTC. Chỉ tính đơn đã thanh toán thành công.]]></text>
+      </staticText>
+    </band>
+  </title>
+  <columnHeader>
+    <band height="30">
+      <staticText>
+        <reportElement x="0" y="5" width="175" height="25"/>
+        <textElement><font isBold="true"/></textElement>
+        <text><![CDATA[Ngày (UTC)]]></text>
+      </staticText>
+      <staticText>
+        <reportElement x="175" y="5" width="155" height="25"/>
+        <textElement textAlignment="Right"><font isBold="true"/></textElement>
+        <text><![CDATA[Số đơn]]></text>
+      </staticText>
+      <staticText>
+        <reportElement x="330" y="5" width="185" height="25"/>
+        <textElement textAlignment="Right"><font isBold="true"/></textElement>
+        <text><![CDATA[Doanh thu]]></text>
+      </staticText>
+    </band>
+  </columnHeader>
+  <detail>
+    <band height="25">
+      <textField>
+        <reportElement x="0" y="0" width="175" height="25"/>
+        <textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+      </textField>
+      <textField pattern="#,##0">
+        <reportElement x="175" y="0" width="155" height="25"/>
+        <textElement textAlignment="Right"/>
+        <textFieldExpression><![CDATA[$F{paidOrders}]]></textFieldExpression>
+      </textField>
+      <textField pattern="#,##0.00">
+        <reportElement x="330" y="0" width="185" height="25"/>
+        <textElement textAlignment="Right"/>
+        <textFieldExpression><![CDATA[$F{revenue}]]></textFieldExpression>
+      </textField>
+    </band>
+  </detail>
+  <pageFooter>
+    <band height="25">
+      <textField>
+        <reportElement x="0" y="5" width="515" height="20"/>
+        <textElement textAlignment="Center"><font size="9"/></textElement>
+        <textFieldExpression><![CDATA["Trang " + $V{PAGE_NUMBER}]]></textFieldExpression>
+      </textField>
+    </band>
+  </pageFooter>
+  <summary>
+    <band height="85">
+      <staticText>
+        <reportElement x="0" y="10" width="175" height="25"/>
+        <textElement><font isBold="true"/></textElement>
+        <text><![CDATA[TỔNG CỘNG]]></text>
+      </staticText>
+      <textField pattern="#,##0">
+        <reportElement x="175" y="10" width="155" height="25"/>
+        <textElement textAlignment="Right"><font isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[$V{TOTAL_ORDERS}]]></textFieldExpression>
+      </textField>
+      <textField pattern="#,##0.00">
+        <reportElement x="330" y="10" width="185" height="25"/>
+        <textElement textAlignment="Right"><font isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[$V{TOTAL_REVENUE}]]></textFieldExpression>
+      </textField>
+      <staticText>
+        <reportElement x="0" y="50" width="515" height="30">
+          <printWhenExpression><![CDATA[$V{REPORT_COUNT}.intValue() == 0]]></printWhenExpression>
+        </reportElement>
+        <text><![CDATA[Chưa có giao dịch thanh toán thành công.]]></text>
+      </staticText>
+    </band>
+  </summary>
+</jasperReport>

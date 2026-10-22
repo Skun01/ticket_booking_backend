@@ -228,13 +228,26 @@ cần xác minh trên MySQL; compile không chứng minh migration hoặc SQL ru
    - `ticket.jrxml`: Title + Detail + Image (QR) + Parameters (tên sự kiện, mã vé).
    - `revenue.jrxml`: Fields + band Summary tính tổng.
 2. `util/QrCodeGenerator` (zxing) sinh ảnh QR từ `ticketCode`.
-3. `service/report` compile + fill Jasper, export PDF (byte[]).
+3. Giữ layer theo AGENTS: `TicketService`/`ReportService` kiểm tra owner và gọi `util/JasperPdfRenderer`
+   compile + fill Jasper, export PDF (byte[]); không tạo package `service/report` riêng.
 4. Endpoint:
    - `GET /api/tickets/{id}/pdf` (owner): vé PDF có QR.
    - `GET /api/organizer/events/{id}/report/pdf` (owner): báo cáo doanh thu PDF.
 5. `MailListener` đính kèm vé PDF vào email.
 
-**Done khi:** tải được PDF vé (QR quét ra ticketCode) và PDF báo cáo.
+Phạm vi triển khai:
+- Không thêm bảng/queue/job hay lưu PDF xuống filesystem. Hai API trả attachment application/pdf, no-store.
+- Template compile một lần lúc khởi tạo renderer; mỗi lần fill dùng parameters/datasource riêng.
+- Dùng font DejaVu từ dependency jasperreports-fonts cùng version để nhúng tiếng Việt.
+- Vé PDF dùng DTO dữ liệu vé sẵn có, QR đúng ticketCode; xem USED/event đã kết thúc/hủy vẫn được nếu owner.
+  Tải PDF không cấp lại hiệu lực vé; check-in luôn kiểm tra DB theo luồng cũ.
+- PDF doanh thu tái dùng dữ liệu Phase 6, Summary SUM các dòng ngày, hỗ trợ cả dữ liệu rỗng.
+- Email multipart có mỗi vé một PDF, giữ nguyên text và receipt/ACK/retry/DLQ Phase 5.
+  Chuẩn bị đủ PDF trước SMTP; email cũ đã sentAt không tự gửi lại sau nâng cấp.
+
+**Done ở mức code khi:** đủ template, QR, hai API owner, mail attachment và compile Java/JRXML thành công.
+Tải/mở PDF, font tiếng Việt, quét QR khớp ticketCode, đối chiếu số liệu PDF/JSON và nhận attachment
+cần kiểm chứng runtime theo README; compile không được coi là đã xác nhận các bước đó.
 
 ---
 

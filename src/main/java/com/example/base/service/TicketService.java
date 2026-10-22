@@ -9,6 +9,8 @@ public interface TicketService {
 
 	PageResponse<TicketResponse> listOwn(Long customerId, Pageable pageable);
 
+	byte[] getPdf(Long customerId, Long ticketId);
+
 	TicketResponse checkIn(Long organizerId, String ticketCode);
 
 }

@@ -357,20 +357,35 @@ Binding `order.#` chuẩn bị cho mở rộng nhưng hiện chỉ hỗ trợ PA
   cơ chế dead-letter mặc định của classic queue cũng không phải bảo đảm chống mất tuyệt đối khi broker sự cố.
 
 Email là plain text UTF-8, có orderCode, tổng tiền, mã vé/hạng vé, event, venue và giờ UTC.
-PDF/QR đính kèm để **Phase 7**, chưa có trong email Phase 5.
+Riêng Phase 5 chưa có PDF/QR; Phase 7 bên dưới đã bổ sung attachment PDF cho từng vé, giữ nguyên phần text.
 
 ### Chạy RabbitMQ và SMTP demo local
 
-Ví dụ Docker, chỉ bind cổng về localhost, dùng cho development:
+File `compose.yaml` chỉ có RabbitMQ Management và MailHog; **không tạo MySQL**, dùng MySQL service đã có.
+Cần Docker Desktop/Docker Engine đang chạy. Từ thư mục `backend`:
 
 ```bash
-docker run -d --name sportslot-rabbit -p 127.0.0.1:5672:5672 -p 127.0.0.1:15672:15672 rabbitmq:4-management
-docker run -d --name sportslot-mailhog -p 127.0.0.1:1025:1025 -p 127.0.0.1:8025:8025 mailhog/mailhog:v1.0.1
+docker compose up -d
+docker compose ps
 ```
 
-- RabbitMQ UI: `http://localhost:15672` (guest/guest chỉ cho local demo).
-- MailHog UI: `http://localhost:8025`, SMTP `localhost:1025`, không cần auth/TLS.
-- Chạy backend với MySQL như hướng dẫn đầu README. Không dùng credential development khi deploy.
+- RabbitMQ: AMQP `localhost:5672`, UI `http://localhost:15672`, tài khoản `guest` / `guest`.
+- MailHog: SMTP `localhost:1025`, UI `http://localhost:8025`, không cần auth/TLS.
+- Các cổng chỉ bind `127.0.0.1`, credential trên chỉ dùng cho development local, không dùng khi deploy public.
+- Cổng/tài khoản khớp mặc định `application.yaml`; nếu đã override bằng env hoặc `.env`, cần chỉnh cho khớp.
+- RabbitMQ có healthcheck và named volume giữ dữ liệu qua lần recreate; MailHog lưu email trong bộ nhớ,
+  email cũ không được giữ sau khi service restart. Nếu đã có container cùng tên/cổng, xử lý xung đột trước khi chạy.
+- Backend vẫn chạy trên máy host bằng `.\mvnw.cmd spring-boot:run`, kết nối MySQL service đang có.
+  Exchange/queue/binding được backend khai báo khi kết nối RabbitMQ, không cần tạo tay trong Compose.
+
+Xem log hoặc dừng hai service (không xóa volume):
+
+```bash
+docker compose logs -f rabbitmq mailhog
+docker compose down
+```
+
+Không dùng `docker compose down -v` nếu muốn giữ dữ liệu RabbitMQ.
 
 | Env | Mặc định | Ý nghĩa |
 |---|---|---|
@@ -547,4 +562,82 @@ Dùng các import: `java.util.UUID`, `com.example.base.domain.Category`,
 6. Thử organizer không sở hữu event và CUSTOMER gọi API report: kỳ vọng bị từ chối.
 
 Đây là checklist runtime cần thực hiện trên MySQL, chưa được xác nhận bằng compile hay kiểm tra tĩnh.
-Không tự tạo/chạy test. PDF report thuộc Phase 7.
+Không tự tạo/chạy test. PDF report được bổ sung ở Phase 7 bên dưới.
+
+## Vé PDF có QR và báo cáo PDF (Phase 7)
+
+Không thêm bảng, queue, filesystem lưu vé hay job. Hai API yêu cầu Bearer JWT:
+
+| Method | Endpoint | Quyền | File tải xuống |
+|---|---|---|---|
+| GET | `/api/tickets/{id}/pdf` | CUSTOMER, owner đơn chứa vé | `ticket-{id}.pdf` |
+| GET | `/api/organizer/events/{id}/report/pdf` | ORGANIZER, owner event | `event-{id}-revenue.pdf` |
+
+Response thành công là `application/pdf`, `Content-Disposition: attachment`, có Content-Length và
+`Cache-Control: no-store`. `{id}` của vé là ID số lấy từ `/api/tickets/my`, không phải chuỗi ticketCode.
+Thiếu JWT/sai role vẫn bị chặn theo security hiện có. Không có endpoint public hay admin PDF mới.
+
+### Nội dung và cách sinh file
+
+- `reports/ticket.jrxml`: Title là tên sự kiện, Detail có hạng vé, thời gian UTC, venue/address,
+  trạng thái tại thời điểm xuất, mã vé và ảnh QR từ Parameters.
+- `util/QrCodeGenerator`: ZXing sinh ảnh QR 240x240, có quiet zone, error correction M.
+  Nội dung QR là **đúng ticketCode**, không phải URL, JWT hay thông tin khách hàng.
+- `reports/revenue.jrxml`: Fields ngày/số đơn/doanh thu; Detail liệt kê doanh thu ngày UTC;
+  Summary dùng Jasper variables SUM để cộng số đơn và doanh thu. Header có tổng vé đã bán.
+  Báo cáo rỗng vẫn có tiêu đề, tổng 0 và thông báo chưa có giao dịch.
+- PDF report dùng lại dữ liệu và kiểm tra owner của `ReportService.getEventReport` ở Phase 6,
+  xem toàn thời gian của event; không thêm bộ lọc hay cách tính doanh thu khác.
+- `util/JasperPdfRenderer` compile hai template từ classpath một lần khi khởi tạo bean,
+  sau đó mỗi lần fill dùng parameters/datasource riêng và export `byte[]` trong bộ nhớ.
+  Tránh dùng Bean datasource trực tiếp với record: các dòng doanh thu được chuyển thành map.
+- Font DejaVu Sans đi kèm dependency `jasperreports-fonts` cùng version Jasper, hỗ trợ và nhúng Unicode
+  tiếng Việt trong PDF; không phụ thuộc font cài sẵn riêng trên máy Windows.
+- `TicketService`/`ReportService` giữ kiểm tra quyền nghiệp vụ; phần kỹ thuật Jasper/QR nằm trong `util/`
+  theo AGENTS, không tạo thêm layer hay service phụ chỉ để bọc renderer.
+
+Vé không tồn tại trả `404 TICKET_NOT_FOUND`; vé của người khác trả `403 TICKET_NOT_OWNED`.
+Lỗi event giữ `EVENT_NOT_FOUND`/`EVENT_NOT_OWNED` như API JSON. Lỗi sinh PDF/QR được xử lý qua
+AppException (`PDF_GENERATION_FAILED`/`QR_GENERATION_FAILED`) và ProblemDetail.
+Template thiếu/sai khi khởi động sẽ làm bean renderer khởi tạo thất bại, không âm thầm bỏ attachment.
+
+Owner vẫn có thể tải vé USED hoặc vé của event đã kết thúc/hủy để giữ chứng từ. PDF là bản chụp thông tin,
+không làm vé hợp lệ lại. Khi quét QR, organizer vẫn phải gọi API check-in; DB quyết định trạng thái thực tế,
+không tin trạng thái đã in trên PDF. Không chia sẻ file chứa ticketCode cho người không liên quan.
+
+### Email đính kèm vé
+
+`MailListener` tiếp tục dùng luồng Phase 5; `OrderMailSender` tạo email multipart UTF-8,
+phần text giữ nguyên, **mỗi vé một attachment `{ticketCode}.pdf`** bằng cùng renderer của API.
+Tất cả attachment được chuẩn bị trước khi gọi SMTP. Nếu tạo PDF thất bại thì không gửi email thiếu vé;
+exception đi theo retry/DLQ hiện có, receipt không được ghi sentAt thành công.
+Giới hạn SMTP/DB không atomic và publish best effort từ Phase 5 không thay đổi.
+
+Receipt đã có sentAt (kể cả email text cũ từ Phase 5) vẫn được bỏ qua khi replay; nâng cấp Phase 7 không tự
+phát lại email đã gửi. Khách có thể tải PDF qua API. Không tự xóa receipt hoặc thêm API resend.
+Đơn tối đa 100 vé nên email có thể có nhiều attachment; cần kiểm tra giới hạn dung lượng SMTP khi demo.
+
+### Ví dụ tải file
+
+```bash
+curl --fail -H 'Authorization: Bearer <customer-token>' \
+  'http://localhost:8080/api/tickets/1/pdf' -o ticket-1.pdf
+
+curl --fail -H 'Authorization: Bearer <organizer-token>' \
+  'http://localhost:8080/api/organizer/events/1/report/pdf' -o event-1-revenue.pdf
+```
+
+Thay ID/token bằng dữ liệu thực tế. `--fail` tránh lưu ProblemDetail lỗi vào file có đuôi `.pdf`.
+
+### Checklist runtime Phase 7
+
+1. Pay một đơn mới, tải PDF từ ticket ID trong danh sách vé; kiểm tra tiếng Việt, ngày UTC và venue.
+2. Quét QR trong PDF: kết quả phải khớp ticketCode trong API; gọi check-in đúng organizer để xác minh vé.
+3. Thử user khác tải vé, organizer khác tải report và ID không tồn tại: kiểm tra 403/404, không lộ PDF.
+4. So sánh số liệu PDF report với API JSON của cùng event, gồm event chưa có doanh thu và báo cáo nhiều ngày.
+5. Xem email mới trong MailHog: số attachment bằng số vé; mở từng PDF và đối chiếu từng mã QR.
+6. Check-in rồi tải lại PDF: trạng thái là USED, không tạo vé mới và không cho check-in lần hai.
+7. Replay message đã gửi thành công: không tự gửi lại email/PDF do receipt Phase 5.
+
+Compile Java và compile JRXML là kiểm tra build; không chứng minh PDF đã render/mở đúng,
+QR đã quét được, email đã gửi hoặc quyền API đã được kiểm chứng runtime. Không tự tạo/chạy test.

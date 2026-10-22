@@ -14,6 +14,10 @@ import org.springframework.data.jpa.repository.Lock;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
+	@Override
+	@EntityGraph(attributePaths = {"orderItem.order", "orderItem.ticketType.event.venue"})
+	Optional<Ticket> findById(Long id);
+
 	@EntityGraph(attributePaths = {"orderItem.order", "orderItem.ticketType.event"})
 	Page<Ticket> findByOrderItemOrderUserId(Long userId, Pageable pageable);
 

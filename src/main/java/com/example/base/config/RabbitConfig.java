@@ -119,7 +119,7 @@ public class RabbitConfig {
 
 		return new RetryTemplate(policy);
 	}
-	
+
 	@Bean
 	SimpleRabbitListenerContainerFactory orderListenerContainerFactory(
 			SimpleRabbitListenerContainerFactoryConfigurer configurer, ConnectionFactory connectionFactory) {
@@ -143,7 +143,8 @@ public class RabbitConfig {
 	private Queue orderQueue(String name, String deadLetterQueue) {
 		QueueBuilder builder = QueueBuilder.durable(name);
 		if (properties.declareDeadLetterArguments()) {
-			builder.deadLetterExchange(properties.deadLetterExchange()).deadLetterRoutingKey(deadLetterQueue);
+			builder.deadLetterExchange(properties.deadLetterExchange())
+				.deadLetterRoutingKey(deadLetterQueue);
 		}
 
 		return builder.build();

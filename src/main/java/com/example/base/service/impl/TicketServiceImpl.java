@@ -7,12 +7,14 @@ import com.example.base.domain.Ticket;
 import com.example.base.domain.enums.EventStatus;
 import com.example.base.domain.enums.OrderStatus;
 import com.example.base.dto.common.PageResponse;
+import com.example.base.dto.notification.TicketMailData;
 import com.example.base.dto.ticket.TicketResponse;
 import com.example.base.exception.AppException;
 import com.example.base.exception.BookingTicketErrorCode;
 import com.example.base.repository.EventRepository;
 import com.example.base.repository.TicketRepository;
 import com.example.base.service.TicketService;
+import com.example.base.util.JasperPdfRenderer;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
@@ -26,11 +28,23 @@ public class TicketServiceImpl implements TicketService {
 
 	private final TicketRepository ticketRepository;
 	private final EventRepository eventRepository;
+	private final JasperPdfRenderer pdfRenderer;
 
 	@Override
 	public PageResponse<TicketResponse> listOwn(Long customerId, Pageable pageable) {
 		return PageResponse.from(ticketRepository.findByOrderItemOrderUserId(customerId, pageable)
 				.map(TicketResponse::from));
+	}
+
+	@Override
+	public byte[] getPdf(Long customerId, Long ticketId) {
+		Ticket ticket = ticketRepository.findById(ticketId)
+				.orElseThrow(() -> new AppException(BookingTicketErrorCode.TICKET_NOT_FOUND));
+		if (!ticket.getOrderItem().getOrder().isOwnedBy(customerId)) {
+			throw new AppException(BookingTicketErrorCode.TICKET_NOT_OWNED);
+		}
+
+		return pdfRenderer.ticket(TicketMailData.from(ticket));
 	}
 
 	@Override

@@ -23,6 +23,10 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.CacheControl;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,6 +68,17 @@ public class OrganizerEventController {
 	@GetMapping("/{id}/report")
 	public EventReportResponse report(@CurrentUser Jwt jwt, @PathVariable Long id) {
 		return reportService.getEventReport(Long.valueOf(jwt.getSubject()), id);
+	}
+
+	@Operation(summary = "Tải báo cáo doanh thu sự kiện dạng PDF")
+	@GetMapping(value = "/{id}/report/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+	public ResponseEntity<byte[]> reportPdf(@CurrentUser Jwt jwt, @PathVariable Long id) {
+		byte[] pdf = reportService.getEventReportPdf(Long.valueOf(jwt.getSubject()), id);
+
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).cacheControl(CacheControl.noStore())
+				.header(HttpHeaders.CONTENT_DISPOSITION,
+						ContentDisposition.attachment().filename("event-" + id + "-revenue.pdf").build().toString())
+				.contentLength(pdf.length).body(pdf);
 	}
 
 	@Operation(summary = "Tạo sự kiện")

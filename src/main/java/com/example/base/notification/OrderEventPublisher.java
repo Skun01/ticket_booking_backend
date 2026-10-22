@@ -31,11 +31,12 @@ public class OrderEventPublisher {
 		}
 		try {
 			// Chỉ gửi sau commit để consumer không thấy đơn chưa commit hoặc đơn sẽ rollback.
-			rabbitTemplate.convertAndSend(properties.exchange(), routingKey, message, amqpMessage -> {
-				amqpMessage.getMessageProperties().setMessageId(message.messageId());
-				amqpMessage.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+			rabbitTemplate.convertAndSend(properties.exchange(), 
+				routingKey, message, amqpMessage -> {
+					amqpMessage.getMessageProperties().setMessageId(message.messageId());
+					amqpMessage.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
 
-				return amqpMessage;
+					return amqpMessage;
 			});
 		}
 		catch (RuntimeException ex) {

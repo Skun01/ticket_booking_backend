@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+    http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+  name="ticket" pageWidth="595" pageHeight="842" columnWidth="515"
+  leftMargin="40" rightMargin="40" topMargin="40" bottomMargin="40">
+  <style name="Base" isDefault="true" fontName="DejaVu Sans" fontSize="11"/>
+  <parameter name="EVENT_TITLE" class="java.lang.String"/>
+  <parameter name="TICKET_CODE" class="java.lang.String"/>
+  <parameter name="TICKET_TYPE" class="java.lang.String"/>
+  <parameter name="STATUS" class="java.lang.String"/>
+  <parameter name="START_TIME" class="java.lang.String"/>
+  <parameter name="END_TIME" class="java.lang.String"/>
+  <parameter name="VENUE" class="java.lang.String"/>
+  <parameter name="QR_CODE" class="java.awt.Image"/>
+  <title>
+    <band height="150">
+      <staticText>
+        <reportElement x="0" y="0" width="515" height="25"/>
+        <textElement><font size="14" isBold="true"/></textElement>
+        <text><![CDATA[SPORT SLOT - VÉ THAM DỰ SỰ KIỆN]]></text>
+      </staticText>
+      <textField>
+        <reportElement x="0" y="40" width="515" height="105"/>
+        <textElement><font size="18" isBold="true"/></textElement>
+        <textFieldExpression><![CDATA[$P{EVENT_TITLE}]]></textFieldExpression>
+      </textField>
+    </band>
+  </title>
+  <detail>
+    <band height="550">
+      <textField>
+        <reportElement x="0" y="0" width="515" height="50"/>
+        <textFieldExpression><![CDATA["Hạng vé: " + $P{TICKET_TYPE}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="0" y="55" width="515" height="22"/>
+        <textFieldExpression><![CDATA["Bắt đầu: " + $P{START_TIME}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="0" y="80" width="515" height="22"/>
+        <textFieldExpression><![CDATA["Kết thúc: " + $P{END_TIME}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="0" y="110" width="515" height="80"/>
+        <textFieldExpression><![CDATA["Địa điểm: " + $P{VENUE}]]></textFieldExpression>
+      </textField>
+      <image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+        <reportElement x="137" y="200" width="240" height="240"/>
+        <imageExpression><![CDATA[$P{QR_CODE}]]></imageExpression>
+      </image>
+      <textField>
+        <reportElement x="0" y="450" width="515" height="25"/>
+        <textElement textAlignment="Center"><font size="10"/></textElement>
+        <textFieldExpression><![CDATA[$P{TICKET_CODE}]]></textFieldExpression>
+      </textField>
+      <textField>
+        <reportElement x="0" y="480" width="515" height="22"/>
+        <textElement textAlignment="Center"/>
+        <textFieldExpression><![CDATA["Trạng thái khi xuất: " + $P{STATUS}]]></textFieldExpression>
+      </textField>
+      <staticText>
+        <reportElement x="0" y="515" width="515" height="35"/>
+        <textElement textAlignment="Center"><font size="9"/></textElement>
+        <text><![CDATA[Bảo mật mã QR. Trạng thái hợp lệ được kiểm tra lại trên hệ thống khi check-in.]]></text>
+      </staticText>
+    </band>
+  </detail>
+  <pageFooter>
+    <band height="25">
+      <staticText>
+        <reportElement x="0" y="5" width="515" height="20"/>
+        <textElement textAlignment="Center"><font size="9"/></textElement>
+        <text><![CDATA[Thời gian hiển thị theo UTC.]]></text>
+      </staticText>
+    </band>
+  </pageFooter>
+</jasperReport>
