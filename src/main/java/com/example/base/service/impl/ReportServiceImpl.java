@@ -67,17 +67,21 @@ public class ReportServiceImpl implements ReportService {
 		if (from == null || to == null || !from.isBefore(to)) {
 			throw new AppException(ReportErrorCode.INVALID_REPORT_RANGE);
 		}
+
+		// call procedure 
 		StoredProcedureQuery procedure = entityManager.createStoredProcedureQuery("sp_revenue_report");
-		// Bind Instant để dùng UTC nhất quán với paid_at, không phụ thuộc timezone của JVM.
 		procedure.registerStoredProcedureParameter(1, Instant.class, ParameterMode.IN);
 		procedure.registerStoredProcedureParameter(2, Instant.class, ParameterMode.IN);
 		procedure.setParameter(1, from);
 		procedure.setParameter(2, to);
+
 		List<?> rows = procedure.getResultList();
 		List<DailyRevenueResponse> dailyRevenue = rows.stream().map(row -> (Object[]) row)
 				.map(DailyRevenueResponse::from).toList();
+
 		List<TopEventResponse> topEvents = paymentRepository.findTopEvents(from, to).stream()
 				.map(TopEventResponse::from).toList();
+
 		long paidOrders = dailyRevenue.stream().mapToLong(DailyRevenueResponse::paidOrders).sum();
 		BigDecimal revenue = dailyRevenue.stream().map(DailyRevenueResponse::revenue)
 				.reduce(BigDecimal.ZERO.setScale(2), BigDecimal::add);

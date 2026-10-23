@@ -62,6 +62,7 @@ public class SecurityConfig {
 					.requestMatchers(AUTH_PATH, "/error").permitAll()
 					.requestMatchers(SWAGGER_PATHS).permitAll()
 					.requestMatchers(HttpMethod.GET, "/api/events", "/api/events/{id}").permitAll()
+					.requestMatchers(HttpMethod.GET, "/api/categories", "/api/venues").permitAll()
 					.anyRequest().authenticated())
 			.exceptionHandling(exceptions -> exceptions
 					.authenticationEntryPoint(authenticationEntryPoint)

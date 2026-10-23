@@ -26,7 +26,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 			""", nativeQuery = true)
 	List<DailyRevenueProjection> findDailyRevenueByEventId(@Param("eventId") Long eventId);
 
-	// Mỗi đơn hiện chỉ có một hạng vé nên join order_items không nhân doanh thu thanh toán.
 	@Query(value = """
 			SELECT e.id AS eventId, e.title AS eventTitle,
 			       SUM(oi.quantity) AS ticketsSold, SUM(p.amount) AS revenue
