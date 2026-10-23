@@ -170,16 +170,18 @@ public class OrderServiceImpl implements OrderService {
 	private TicketType reserveStock(Long ticketTypeId, int quantity) {
 		Long eventId = ticketTypeRepository.findEventIdById(ticketTypeId)
 				.orElseThrow(() -> new AppException(TicketTypeErrorCode.TICKET_TYPE_NOT_FOUND));
-		// Khóa chia sẻ cho phép nhiều khách mua đồng thời nhưng chặn organizer đổi trạng thái giữa chừng.
+
 		eventRepository.findBookingById(eventId)
-				.orElseThrow(() -> new AppException(EventErrorCode.EVENT_NOT_FOUND));
+			.orElseThrow(() -> new AppException(EventErrorCode.EVENT_NOT_FOUND));
+			
 		TicketType ticketType = ticketTypeRepository.findById(ticketTypeId)
 				.orElseThrow(() -> new AppException(TicketTypeErrorCode.TICKET_TYPE_NOT_FOUND));
+
 		ticketType.requireBookable(quantity, Instant.now());
 		if (ticketTypeRepository.reserve(ticketTypeId, quantity) != 1) {
 			throw new AppException(OrderErrorCode.SOLD_OUT);
 		}
-		// Có thể đã chờ khóa kho lâu; kiểm tra lại giờ bán sau UPDATE, sai thì rollback cả lượng giữ.
+		
 		ticketType.requireBookable(quantity, Instant.now());
 
 		return ticketType;

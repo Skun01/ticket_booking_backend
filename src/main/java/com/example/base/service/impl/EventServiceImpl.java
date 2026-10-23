@@ -28,6 +28,8 @@ import com.example.base.repository.specification.EventSpecifications;
 import com.example.base.service.EventService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -60,6 +62,7 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
+	@Cacheable(value = "event-detail", key = "#eventId")
 	public EventDetailResponse getPublic(Long eventId) {
 		Event event = eventRepository.findByIdAndStatus(eventId, EventStatus.PUBLISHED)
 				.orElseThrow(() -> new AppException(EventErrorCode.EVENT_NOT_FOUND));
@@ -97,6 +100,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	@Transactional
+	@CacheEvict(value = "event-detail", key = "#eventId")
 	public EventResponse update(Long organizerId, Long eventId, EventRequest request) {
 		Event event = findLockedOwnEvent(organizerId, eventId);
 		event.requireDraft();
@@ -116,6 +120,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	@Transactional
+	@CacheEvict(value = "event-detail", key = "#eventId")
 	public EventResponse changeStatus(Long organizerId, Long eventId, EventStatusRequest request) {
 		Event event = findLockedOwnEvent(organizerId, eventId);
 		switch (request.status()) {

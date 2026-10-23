@@ -24,7 +24,6 @@ public interface TicketTypeRepository extends JpaRepository<TicketType, Long> {
 	@Query(value = "SELECT event_id FROM ticket_types WHERE id = :id", nativeQuery = true)
 	Optional<Long> findEventIdById(@Param("id") Long id);
 
-	// UPDATE có điều kiện kiểm tra tồn kho ngay trên hàng đang khóa, không dựa vào entity đã đọc trước đó.
 	@Modifying(flushAutomatically = true)
 	@Query(value = """
 			UPDATE ticket_types
