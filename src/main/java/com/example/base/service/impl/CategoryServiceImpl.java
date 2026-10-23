@@ -26,7 +26,10 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public PageResponse<CategoryResponse> list(Pageable pageable) {
-		return PageResponse.from(categoryRepository.findAll(pageable).map(CategoryResponse::from));
+		return PageResponse.from(
+			categoryRepository.findAll(pageable)
+			.map(CategoryResponse::from)
+		);
 	}
 
 	@Override

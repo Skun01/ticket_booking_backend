@@ -26,7 +26,10 @@ public class VenueServiceImpl implements VenueService {
 
 	@Override
 	public PageResponse<VenueResponse> list(Pageable pageable) {
-		return PageResponse.from(venueRepository.findAll(pageable).map(VenueResponse::from));
+		return PageResponse.from(
+			venueRepository.findAll(pageable)
+				.map(VenueResponse::from)
+		);
 	}
 
 	@Override

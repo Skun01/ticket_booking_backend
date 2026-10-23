@@ -7,3 +7,6 @@ app:
   admin:
     email: admin@test.local
     password: admin12345
+  organizer:
+    email: thaitruong@organizer.com
+    password: 12345678
