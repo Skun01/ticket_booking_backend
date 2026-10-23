@@ -51,7 +51,7 @@ public class RedisConfig {
 				.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.json()));
 
 		Map<String, RedisCacheConfiguration> cacheConfigs = Map.of(
-				"event-detail", defaultConfig.entryTtl(cacheProperties.eventDetailTtl())
+				"event-detail-v2", defaultConfig.entryTtl(cacheProperties.eventDetailTtl())
 		);
 
 		return RedisCacheManager.builder(connectionFactory)

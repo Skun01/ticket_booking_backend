@@ -51,6 +51,9 @@ public class Event extends BaseEntity {
 	private String bannerUrl;
 
 	@Column(nullable = false)
+	private Instant salesStartTime;
+
+	@Column(nullable = false)
 	private Instant startTime;
 
 	@Column(nullable = false)
@@ -66,15 +69,18 @@ public class Event extends BaseEntity {
 	private List<TicketType> ticketTypes = new ArrayList<>();
 
 	public Event(User organizer, Category category, Venue venue, String title, String description,
-			String bannerUrl, Instant startTime, Instant endTime) {
+			String bannerUrl, Instant salesStartTime, Instant startTime, Instant endTime) {
 		this.organizer = organizer;
 		this.status = EventStatus.DRAFT;
-		update(category, venue, title, description, bannerUrl, startTime, endTime);
+		update(category, venue, title, description, bannerUrl, salesStartTime, startTime, endTime);
 	}
 
 	public void update(Category category, Venue venue, String title, String description,
-			String bannerUrl, Instant startTime, Instant endTime) {
+			String bannerUrl, Instant salesStartTime, Instant startTime, Instant endTime) {
 		requireDraft();
+		if (!salesStartTime.isBefore(startTime)) {
+			throw new AppException(EventErrorCode.INVALID_SALES_START_TIME);
+		}
 		if (!endTime.isAfter(startTime)) {
 			throw new AppException(EventErrorCode.INVALID_EVENT_TIME);
 		}
@@ -83,6 +89,7 @@ public class Event extends BaseEntity {
 		this.title = title;
 		this.description = description;
 		this.bannerUrl = bannerUrl;
+		this.salesStartTime = salesStartTime;
 		this.startTime = startTime;
 		this.endTime = endTime;
 	}
@@ -112,6 +119,9 @@ public class Event extends BaseEntity {
 	public void requireBookable(Instant now) {
 		if (status != EventStatus.PUBLISHED || !startTime.isAfter(now)) {
 			throw new AppException(OrderErrorCode.EVENT_NOT_BOOKABLE);
+		}
+		if (now.isBefore(salesStartTime)) {
+			throw new AppException(OrderErrorCode.SALE_NOT_OPEN);
 		}
 	}
 

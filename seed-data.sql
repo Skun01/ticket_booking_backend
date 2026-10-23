@@ -128,7 +128,7 @@ WHERE NOT EXISTS (SELECT 1 FROM venues existing WHERE existing.name = v.name);
 -- Thời gian bắt đầu được lập lịch tương lai để sẵn sàng trải nghiệm đặt vé
 -- =====================================================================
 -- [1/20] KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING (Ticketbox #26701)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer1@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'am-nhac' LIMIT 1),
@@ -179,6 +179,7 @@ Sự kiện có hoạt động ghi hình, chụp ảnh và thu âm. Bằng việ
 
 ... (Vui lòng xem chi tiết quy định tại sự kiện)',
     'https://salt.tkbcdn.com/ts/ds/72/a1/4f/6faa7e2fd828dd9d78a4d3be80323d7e.png',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 15 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 15 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -187,7 +188,7 @@ WHERE NOT EXISTS (
 );
 
 -- [2/20] MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI) (Ticketbox #26657)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer2@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'am-nhac' LIMIT 1),
@@ -233,6 +234,7 @@ II. CHÍNH SÁCH XUẤT HÓA ĐƠN CHO KHÁCH HÀNG MUA VÉ: 
 
 ... (Vui lòng xem chi tiết quy định tại sự kiện)',
     'https://salt.tkbcdn.com/ts/ds/9a/7c/6e/60a6e4610ee4810a3227951df5a27f02.png',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 7 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 7 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -241,7 +243,7 @@ WHERE NOT EXISTS (
 );
 
 -- [3/20] [TP.HCM] Những Thành Phố Mơ Màng Year End 2026 (Ticketbox #26646)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer3@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'am-nhac' LIMIT 1),
@@ -283,6 +285,7 @@ QUY ĐỊNH CHUNG CỦA SỰ KIỆN 
 
 Mọi vấn đề liên quan đến vé sự kiện cần hỗ trợ, bạn vui lòng liên hệ tổng đài của Ticketbox theo số hotline 1900 6408.',
     'https://salt.tkbcdn.com/ts/ds/a8/f3/f1/d6a97ff188d01c3b04cb7d3db209523d.png',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 21 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 21 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -291,7 +294,7 @@ WHERE NOT EXISTS (
 );
 
 -- [4/20] [Hà Nội] Những Thành Phố Mơ Màng Year End 2026 (Ticketbox #26645)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer4@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'am-nhac' LIMIT 1),
@@ -333,6 +336,7 @@ QUY ĐỊNH CHUNG CỦA SỰ KIỆN 
 
 Mọi vấn đề liên quan đến vé sự kiện cần hỗ trợ, bạn vui lòng liên hệ tổng đài của Ticketbox theo số hotline 1900 6408.',
     'https://salt.tkbcdn.com/ts/ds/ef/28/0b/c6292332ce87884b183c77f9dd8e2c88.png',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 28 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 28 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -341,7 +345,7 @@ WHERE NOT EXISTS (
 );
 
 -- [5/20] LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN (Ticketbox #26507)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer5@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'am-nhac' LIMIT 1),
@@ -391,6 +395,7 @@ II. CHÍNH SÁCH XUẤT HÓA ĐƠN CHO KHÁCH HÀNG MUA VÉ: 
 
 ... (Vui lòng xem chi tiết quy định tại sự kiện)',
     'https://salt.tkbcdn.com/ts/ds/c8/6f/51/5bf244a772a9d6390b67d4e53dee0609.jpeg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 12 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 12 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -399,7 +404,7 @@ WHERE NOT EXISTS (
 );
 
 -- [6/20] Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội (Ticketbox #26333)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer6@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'am-nhac' LIMIT 1),
@@ -436,6 +441,7 @@ CHỦ NHẬT | 01.11.26 | 19:00- 22:00 
 • Quyết định cuối cùng: Trong mọi tình huống, quyết định của BTC là quyết định cuối cùng.
 Cảm ơn các bạn đã thấu hiểu và phối hợp cùng BTC. Hẹn gặp tất cả các bạn tại đêm diễn nhé! ✨',
     'https://salt.tkbcdn.com/ts/ds/f6/7b/fc/5657c5c2f5d83c534ae75b60e78394ee.jpg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 9 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 9 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -444,7 +450,7 @@ WHERE NOT EXISTS (
 );
 
 -- [7/20] THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng x Bình Văn Band (Ticketbox #26364)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer7@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'am-nhac' LIMIT 1),
@@ -453,6 +459,7 @@ SELECT
     'Đêm nhạc THE BROTHERS quy tụ dàn nghệ sĩ tài năng: Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng cùng Bình Văn Band tại Trung Tâm Nghệ Thuật Âu Cơ, Hà Nội.
 Khán giả sẽ được đắm chìm trong những giai điệu thăng hoa và các màn kết hợp đỉnh cao, bùng nổ cảm xúc.',
     'https://salt.tkbcdn.com/ts/ds/9b/85/b2/9362cb5a33bebeb4b290577b583446dc.jpeg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 6 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 6 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -461,7 +468,7 @@ WHERE NOT EXISTS (
 );
 
 -- [8/20] Whisper of Two Hearts [Hoàng Hải - Phương Linh] (Ticketbox #26746)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer8@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'san-khau-nghe-thuat' LIMIT 1),
@@ -481,6 +488,7 @@ Thời gian: 20h00, Thứ Bảy - 31/10/2026
 
 Địa điểm: Nhà hát Hoa Phượng - Số 1 Trần Kiên, Thủy Nguyên, Hải Phòng',
     'https://salt.tkbcdn.com/ts/ds/ea/53/9b/5048ea57f51538928d7ca01db212f150.jpg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 10 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 10 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -489,7 +497,7 @@ WHERE NOT EXISTS (
 );
 
 -- [9/20] [CAT&MOUSE] THÀNH VÁ (Ticketbox #26678)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer9@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'am-nhac' LIMIT 1),
@@ -498,6 +506,7 @@ SELECT
     'Đêm nhạc acoustic đầy cảm xúc cùng ca sĩ Thành Vá tại Cat&Mouse Live Music, TP. Hồ Chí Minh.
 Thưởng thức những giai điệu acoustic mộc mạc, gần gũi trong không gian âm nhạc ấm cúng và tràn đầy năng lượng nghệ thuật.',
     'https://salt.tkbcdn.com/ts/ds/e8/c4/75/b9f4667d5ae274899ca287bada756672.png',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 4 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 4 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -506,7 +515,7 @@ WHERE NOT EXISTS (
 );
 
 -- [10/20] Lễ Hội Bia Thủ Công (Ticketbox #26747)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer10@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'am-nhac' LIMIT 1),
@@ -571,6 +580,7 @@ Sự kiện có phục vụ đồ uống có cồn. Khách dưới 18 tuổi kh�
 
 Trẻ em tham dự cần có người lớn đi cùng và chịu sự giám sát của phụ huynh/người giám hộ trong suốt thời gian diễn ra sự kiện.',
     'https://salt.tkbcdn.com/ts/ds/22/be/e2/7c4ffb556c5455efe5524dfec35e5c50.jpg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 14 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 14 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -579,7 +589,7 @@ WHERE NOT EXISTS (
 );
 
 -- [11/20] LCP 2026 Promotion Series (Ticketbox #26689)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer11@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'the-thao' LIMIT 1),
@@ -695,6 +705,7 @@ Không tự ý di chuyển sang vị trí ngồi khác khi chưa có sự hướ
 
 ... (Vui lòng xem chi tiết quy định tại sự kiện)',
     'https://salt.tkbcdn.com/ts/ds/da/b2/d6/c4ee3ae063b36d5806fc73d70081a8ad.png',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 16 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 16 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -703,7 +714,7 @@ WHERE NOT EXISTS (
 );
 
 -- [12/20] Queens Of Glory - Giải Thể Thao Điện Tử Vinh Quang Nữ Hoàng (Ticketbox #26733)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer12@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'the-thao' LIMIT 1),
@@ -779,6 +790,7 @@ Giá vé đã bao gồm 8% VAT.
 
 Vé chỉ được sử dụng một lần.',
     'https://salt.tkbcdn.com/ts/ds/f8/cd/d1/e1dd2c3facc36c0ad261eb2b5b27f893.jpg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 18 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 18 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -787,7 +799,7 @@ WHERE NOT EXISTS (
 );
 
 -- [13/20] Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026 (Ticketbox #26216)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer13@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'san-khau-nghe-thuat' LIMIT 1),
@@ -812,6 +824,7 @@ Chỉ 8 đêm diễn duy nhất.
 
 * Trong mọi trường hợp, quyết định của Ban tổ chức là quyết định cuối cùng.',
     'https://salt.tkbcdn.com/ts/ds/4f/68/61/12e6530d26bb75b0910a0e2e7944337b.jpg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 25 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 25 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -820,7 +833,7 @@ WHERE NOT EXISTS (
 );
 
 -- [14/20] Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 2026 (Ticketbox #26215)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer14@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'san-khau-nghe-thuat' LIMIT 1),
@@ -847,6 +860,7 @@ Chỉ 8 đêm diễn duy nhất
 
 Vé đã mua sẽ không được hoàn hủy với bất kỳ lý do nào!',
     'https://salt.tkbcdn.com/ts/ds/6b/9b/44/d897fee76073aaabd33d0974b10b433d.jpg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 30 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 30 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -855,7 +869,7 @@ WHERE NOT EXISTS (
 );
 
 -- [15/20] Nhà Hát Kịch IDECAF: Dưới Bóng Giai Nhân (Ticketbox #25859)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer15@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'san-khau-nghe-thuat' LIMIT 1),
@@ -869,6 +883,7 @@ SELECT
 
 - Diễn Viên: Thanh Thủy, Hồng Ánh, Hoàng Trinh, Mỹ Duyên, Tuyền Mập, Bạch Long, Đình Toàn, Đại Nghĩa, Công Danh, Trịnh Minh Dũng, Phạm Hùng, Kan Lê, Ngọc Nguyên, Minh Sang, Hữu Đạt, Phạm Hạnh, Thanh Anh, Trúc My, Bích Trâm, Bảo Cường, Nhà Hát Thiếu Nhi NỤ CƯỜI với sự góp mặt đặc biệt của NS Diệu Đức.',
     'https://salt.tkbcdn.com/ts/ds/e9/76/b4/2e8fe2916b6237e6676f7acbb382b260.jpg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 5 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 5 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -877,7 +892,7 @@ WHERE NOT EXISTS (
 );
 
 -- [16/20] Nhà Hát Kịch IDECAF: Hồn Ai Nấy Giữ (Ticketbox #24907)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer16@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'san-khau-nghe-thuat' LIMIT 1),
@@ -891,6 +906,7 @@ SELECT
 
 • Diễn viên: Đại Nghĩa, Hồng Ánh, Đình Toàn, Quốc Thịnh, Phi Nga, Tuyền Mập, Cẩm Hò, Thái Hiển, Hoài Trang, Phạm Hạnh, Trúc My, Thanh Anh, Công Tôn Nghĩa, Phương Nguyễn...',
     'https://salt.tkbcdn.com/ts/ds/39/6e/28/325cda4a104fdc0ccb1b5c1d464927a8.jpg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 8 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 8 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -899,7 +915,7 @@ WHERE NOT EXISTS (
 );
 
 -- [17/20] Sân khấu Trương Hùng Minh: Song Trùng (Ticketbox #25900)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer17@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'san-khau-nghe-thuat' LIMIT 1),
@@ -917,6 +933,7 @@ Giám đốc sản xuất: NSƯT Minh Nhí
 
 Biên kịch: Đình Phong',
     'https://salt.tkbcdn.com/ts/ds/df/ec/26/35bec5d69c0733a56eec669faa2a10c6.jpeg',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 11 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 11 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -925,7 +942,7 @@ WHERE NOT EXISTS (
 );
 
 -- [18/20] SÂN KHẤU BAN MAI - VỞ NHẠC KỊCH THIẾU NHI: PENNY - Ô MÊ LY (Ticketbox #23446)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer18@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'san-khau-nghe-thuat' LIMIT 1),
@@ -971,6 +988,7 @@ LƯU Ý:
 
 Ban Mai trân trọng cám ơn!',
     'https://salt.tkbcdn.com/ts/ds/fc/26/61/6c71baf415b6cd8f2655aebdc2d6dfb2.png',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 13 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 13 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -979,7 +997,7 @@ WHERE NOT EXISTS (
 );
 
 -- [19/20] TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR (Ticketbox #23759)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer19@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'tham-quan-trai-nghiem' LIMIT 1),
@@ -1011,6 +1029,7 @@ Quý khách đặt vé và lựa chọn chương trình trải nghiệm yêu th�
 
 Lưu ý: Trong trường hợp tour đêm Văn Miếu - Quốc Tử Giám phải hoãn các chương trình vì lý do bất khả kháng (Thời tiết xấu hay vì lý do khác), quý khách đã mua vé được liên hệ đổi sang thời gian khác phù hợp. Vé sẽ không được hoàn trả vì bất kỳ lý do nào.',
     'https://salt.tkbcdn.com/ts/ds/47/19/34/ab4d5359e79aa5204c3a8376f0c96747.png',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 3 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 3 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -1019,7 +1038,7 @@ WHERE NOT EXISTS (
 );
 
 -- [20/20] Mystic Night Show - Magic & Comedy in Saigon (Ticketbox #26644)
-INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, start_time, end_time, status, created_at, updated_at)
+INSERT INTO events (organizer_id, category_id, venue_id, title, description, banner_url, sales_start_time, start_time, end_time, status, created_at, updated_at)
 SELECT
     (SELECT id FROM users WHERE email = 'organizer20@sportslot.test' LIMIT 1),
     (SELECT id FROM categories WHERE slug = 'san-khau-nghe-thuat' LIMIT 1),
@@ -1039,6 +1058,7 @@ Show details:
 
 • Limited to 20 seats per show',
     'https://salt.tkbcdn.com/ts/ds/3f/af/2c/9d5c5809600713a14a9ffc9e4113cba9.png',
+    @NOW - INTERVAL 1 DAY,
     @NOW + INTERVAL 2 DAY + INTERVAL 11 HOUR,
     @NOW + INTERVAL 2 DAY + INTERVAL 15 HOUR,
     'PUBLISHED', @NOW, @NOW
@@ -1050,7 +1070,7 @@ WHERE NOT EXISTS (
 -- 5) Các hạng vé thực tế tương ứng cho từng sự kiện (Ticket Types)
 -- =====================================================================
 -- Hạng vé cho sự kiện [1/20]: KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'NGƯỜI VIỆT 1 (SEATED)',
@@ -1058,8 +1078,6 @@ SELECT
     50,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1067,7 +1085,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'NGƯỜI VIỆT 1 (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'NGƯỜI VIỆT 2 (SEATED)',
@@ -1075,8 +1093,6 @@ SELECT
     50,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1084,7 +1100,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'NGƯỜI VIỆT 2 (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SPACESPEAKERS (SEATED)',
@@ -1092,8 +1108,6 @@ SELECT
     50,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1101,7 +1115,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SPACESPEAKERS (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HANOI FLOW 1 (SEATED)',
@@ -1109,8 +1123,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1118,7 +1130,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HANOI FLOW 1 (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HANOI FLOW 2 (SEATED)',
@@ -1126,8 +1138,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1135,7 +1145,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HANOI FLOW 2 (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'PHỐ CỔ 1 (SEATED)',
@@ -1143,8 +1153,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1152,7 +1160,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'PHỐ CỔ 1 (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'PHỐ CỔ 2 (SEATED)',
@@ -1160,8 +1168,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1169,7 +1175,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'PHỐ CỔ 2 (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'NEM CHUA RÁN 1 (SEATED)',
@@ -1177,8 +1183,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1186,7 +1190,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'NEM CHUA RÁN 1 (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'NEM CHUA RÁN 2 (SEATED)',
@@ -1194,8 +1198,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1203,7 +1205,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'NEM CHUA RÁN 2 (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'TRÀ ĐÁ 1 (SEATED)',
@@ -1211,8 +1213,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1220,7 +1220,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'TRÀ ĐÁ 1 (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'TRÀ ĐÁ 2 (SEATED)',
@@ -1228,8 +1228,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1237,7 +1235,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'TRÀ ĐÁ 2 (SEATED)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HOME 1 (STANDING)',
@@ -1245,8 +1243,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1254,7 +1250,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HOME 1 (STANDING)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HOME 2 (STANDING)',
@@ -1262,8 +1258,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1271,7 +1265,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HOME 2 (STANDING)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HOME 3 (STANDING)',
@@ -1279,8 +1273,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1288,7 +1280,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HOME 3 (STANDING)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HOME 4 (STANDING)',
@@ -1296,8 +1288,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1305,7 +1295,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HOME 4 (STANDING)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HOA SỮA 1 (STANDING)',
@@ -1313,8 +1303,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1322,7 +1310,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HOA SỮA 1 (STANDING)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HOA SỮA 2 (STANDING)',
@@ -1330,8 +1318,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1339,7 +1325,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HOA SỮA 2 (STANDING)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HƯƠNG NGỌC LAN 1 (STANDING)',
@@ -1347,8 +1333,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1356,7 +1340,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HƯƠNG NGỌC LAN 1 (STANDING)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HƯƠNG NGỌC LAN 2 (STANDING)',
@@ -1364,8 +1348,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1373,7 +1355,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HƯƠNG NGỌC LAN 2 (STANDING)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'BÂNG KHUÂNG 1 (STANDING)',
@@ -1381,8 +1363,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1390,7 +1370,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'BÂNG KHUÂNG 1 (STANDING)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'BÂNG KHUÂNG 2 (STANDING)',
@@ -1398,8 +1378,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
@@ -1408,7 +1386,7 @@ WHERE e.title = 'KOSMIK LIVE CONCERT 2026 IN HANOI: HOMECOMING'
   );
 
 -- Hạng vé cho sự kiện [2/20]: MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'GÁC MÁI',
@@ -1416,8 +1394,6 @@ SELECT
     50,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1425,7 +1401,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'GÁC MÁI'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'BAN CÔNG A',
@@ -1433,8 +1409,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1442,7 +1416,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'BAN CÔNG A'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'BAN CÔNG B',
@@ -1450,8 +1424,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1459,7 +1431,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'BAN CÔNG B'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'TÂM TRÍ A',
@@ -1467,8 +1439,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1476,7 +1446,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'TÂM TRÍ A'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'TÂM TRÍ B',
@@ -1484,8 +1454,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1493,7 +1461,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'TÂM TRÍ B'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HÀNH LANG A',
@@ -1501,8 +1469,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1510,7 +1476,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HÀNH LANG A'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HÀNH LANG B',
@@ -1518,8 +1484,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1527,7 +1491,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HÀNH LANG B'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SÂN TRƯỚC A',
@@ -1535,8 +1499,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1544,7 +1506,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SÂN TRƯỚC A'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SÂN TRƯỚC B',
@@ -1552,8 +1514,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1561,7 +1521,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SÂN TRƯỚC B'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'MÁI NHÀ A',
@@ -1569,8 +1529,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1578,7 +1536,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'MÁI NHÀ A'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'MÁI NHÀ B',
@@ -1586,8 +1544,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
@@ -1596,7 +1552,7 @@ WHERE e.title = 'MẮT NHẮM MẮT MỞ CONCERT - DAY 3 (HÀ NỘI)'
   );
 
 -- Hạng vé cho sự kiện [3/20]: [TP.HCM] Những Thành Phố Mơ Màng Year End 2026
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'GENERAL TICKET (FINAL ROUND)',
@@ -1604,8 +1560,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = '[TP.HCM] Những Thành Phố Mơ Màng Year End 2026'
@@ -1613,7 +1567,7 @@ WHERE e.title = '[TP.HCM] Những Thành Phố Mơ Màng Year End 2026'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'GENERAL TICKET (FINAL ROUND)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'GENERAL TICKET (OPENING ROUND)',
@@ -1621,8 +1575,6 @@ SELECT
     300,
     0,
     2,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = '[TP.HCM] Những Thành Phố Mơ Màng Year End 2026'
@@ -1630,7 +1582,7 @@ WHERE e.title = '[TP.HCM] Những Thành Phố Mơ Màng Year End 2026'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'GENERAL TICKET (OPENING ROUND)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'GENERAL TICKET (SPOTLIGHT ROUND)',
@@ -1638,8 +1590,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = '[TP.HCM] Những Thành Phố Mơ Màng Year End 2026'
@@ -1648,7 +1598,7 @@ WHERE e.title = '[TP.HCM] Những Thành Phố Mơ Màng Year End 2026'
   );
 
 -- Hạng vé cho sự kiện [4/20]: [Hà Nội] Những Thành Phố Mơ Màng Year End 2026
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'GENERAL TICKET (FINAL ROUND)',
@@ -1656,8 +1606,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = '[Hà Nội] Những Thành Phố Mơ Màng Year End 2026'
@@ -1665,7 +1613,7 @@ WHERE e.title = '[Hà Nội] Những Thành Phố Mơ Màng Year End 2026'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'GENERAL TICKET (FINAL ROUND)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'GENERAL TICKET (OPENING ROUND)',
@@ -1673,8 +1621,6 @@ SELECT
     300,
     0,
     2,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = '[Hà Nội] Những Thành Phố Mơ Màng Year End 2026'
@@ -1682,7 +1628,7 @@ WHERE e.title = '[Hà Nội] Những Thành Phố Mơ Màng Year End 2026'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'GENERAL TICKET (OPENING ROUND)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'GERERAL TICKET (SPOTLIGHT ROUND)',
@@ -1690,8 +1636,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = '[Hà Nội] Những Thành Phố Mơ Màng Year End 2026'
@@ -1700,7 +1644,7 @@ WHERE e.title = '[Hà Nội] Những Thành Phố Mơ Màng Year End 2026'
   );
 
 -- Hạng vé cho sự kiện [5/20]: LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SKYNOTE 1',
@@ -1708,8 +1652,6 @@ SELECT
     50,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1717,7 +1659,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SKYNOTE 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SKYNOTE 2',
@@ -1725,8 +1667,6 @@ SELECT
     50,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1734,7 +1674,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SKYNOTE 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SKYNOTE 3',
@@ -1742,8 +1682,6 @@ SELECT
     50,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1751,7 +1689,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SKYNOTE 3'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN THANH 1',
@@ -1759,8 +1697,6 @@ SELECT
     50,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1768,7 +1704,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN THANH 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN THANH 2',
@@ -1776,8 +1712,6 @@ SELECT
     50,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1785,7 +1719,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN THANH 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN THANH 3',
@@ -1793,8 +1727,6 @@ SELECT
     50,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1802,7 +1734,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN THANH 3'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NGỌC 1',
@@ -1810,8 +1742,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1819,7 +1749,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NGỌC 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NGỌC 2',
@@ -1827,8 +1757,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1836,7 +1764,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NGỌC 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NGỌC 3',
@@ -1844,8 +1772,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1853,7 +1779,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NGỌC 3'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NGỌC 4',
@@ -1861,8 +1787,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1870,7 +1794,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NGỌC 4'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NGỌC 5',
@@ -1878,8 +1802,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1887,7 +1809,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NGỌC 5'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NGỌC 6',
@@ -1895,8 +1817,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1904,7 +1824,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NGỌC 6'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN KIM 1',
@@ -1912,8 +1832,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1921,7 +1839,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN KIM 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN KIM 2',
@@ -1929,8 +1847,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1938,7 +1854,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN KIM 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN KIM 3',
@@ -1946,8 +1862,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1955,7 +1869,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN KIM 3'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN KIM 4',
@@ -1963,8 +1877,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1972,7 +1884,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN KIM 4'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN KIM 5',
@@ -1980,8 +1892,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -1989,7 +1899,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN KIM 5'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN KIM 6',
@@ -1997,8 +1907,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2006,7 +1914,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN KIM 6'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN KIM 7',
@@ -2014,8 +1922,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2023,7 +1929,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN KIM 7'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN MỘC 1',
@@ -2031,8 +1937,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2040,7 +1944,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN MỘC 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN MỘC 2',
@@ -2048,8 +1952,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2057,7 +1959,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN MỘC 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN MỘC 3',
@@ -2065,8 +1967,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2074,7 +1974,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN MỘC 3'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN MỘC 4',
@@ -2082,8 +1982,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2091,7 +1989,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN MỘC 4'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN MỘC 5',
@@ -2099,8 +1997,6 @@ SELECT
     150,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2108,7 +2004,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN MỘC 5'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 1',
@@ -2116,8 +2012,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2125,7 +2019,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 2',
@@ -2133,8 +2027,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2142,7 +2034,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 3',
@@ -2150,8 +2042,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2159,7 +2049,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 3'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 4',
@@ -2167,8 +2057,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2176,7 +2064,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 4'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 5',
@@ -2184,8 +2072,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2193,7 +2079,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 5'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 6',
@@ -2201,8 +2087,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2210,7 +2094,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 6'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 7',
@@ -2218,8 +2102,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2227,7 +2109,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 7'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 8',
@@ -2235,8 +2117,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2244,7 +2124,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 8'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 9',
@@ -2252,8 +2132,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2261,7 +2139,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 9'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 10',
@@ -2269,8 +2147,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2278,7 +2154,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 10'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 11',
@@ -2286,8 +2162,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2295,7 +2169,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'THIÊN NHIÊN 11'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THIÊN NHIÊN 12',
@@ -2303,8 +2177,6 @@ SELECT
     300,
     0,
     8,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
@@ -2313,7 +2185,7 @@ WHERE e.title = 'LIVE CONCERT - SKYNOTE THE REFLECTION DAY 2 - QUỐC THIÊN'
   );
 
 -- Hạng vé cho sự kiện [6/20]: Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SVIP - Em',
@@ -2321,8 +2193,6 @@ SELECT
     50,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội'
@@ -2330,7 +2200,7 @@ WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng 
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SVIP - Em'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'VVIP - Một Bước Yêu Vạn Dặm Đau',
@@ -2338,8 +2208,6 @@ SELECT
     150,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội'
@@ -2347,7 +2215,7 @@ WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng 
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'VVIP - Một Bước Yêu Vạn Dặm Đau'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'VIP - Day Dứt Nỗi Đau',
@@ -2355,8 +2223,6 @@ SELECT
     150,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội'
@@ -2364,7 +2230,7 @@ WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng 
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'VIP - Day Dứt Nỗi Đau'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Dưới Những Cơn Mưa',
@@ -2372,8 +2238,6 @@ SELECT
     150,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội'
@@ -2381,7 +2245,7 @@ WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng 
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Dưới Những Cơn Mưa'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Vô Hình Trong Tim Em',
@@ -2389,8 +2253,6 @@ SELECT
     150,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội'
@@ -2398,7 +2260,7 @@ WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng 
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Vô Hình Trong Tim Em'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Lắng Nghe Nước Mắt',
@@ -2406,8 +2268,6 @@ SELECT
     150,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội'
@@ -2415,7 +2275,7 @@ WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng 
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Lắng Nghe Nước Mắt'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Khóc Cùng Em 1',
@@ -2423,8 +2283,6 @@ SELECT
     150,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội'
@@ -2432,7 +2290,7 @@ WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng 
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Khóc Cùng Em 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Khóc Cùng Em 2',
@@ -2440,8 +2298,6 @@ SELECT
     150,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội'
@@ -2449,7 +2305,7 @@ WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng 
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Khóc Cùng Em 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Khóc Cùng Em 3',
@@ -2457,8 +2313,6 @@ SELECT
     300,
     0,
     6,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội'
@@ -2466,7 +2320,7 @@ WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng 
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Khóc Cùng Em 3'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Vé Mời',
@@ -2474,8 +2328,6 @@ SELECT
     150,
     0,
     1,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng Băng - Hà Nội'
@@ -2484,7 +2336,7 @@ WHERE e.title = 'Mr Siro - Encore Extended - Ai Cũng Giấu Trong Lòng Tảng 
   );
 
 -- Hạng vé cho sự kiện [7/20]: THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng x Bình Văn Band
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     '1st Row',
@@ -2492,8 +2344,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng x Bình Văn Band'
@@ -2501,7 +2351,7 @@ WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Ch
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = '1st Row'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     '1st Row (L&R)',
@@ -2509,8 +2359,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng x Bình Văn Band'
@@ -2518,7 +2366,7 @@ WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Ch
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = '1st Row (L&R)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'RED',
@@ -2526,8 +2374,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng x Bình Văn Band'
@@ -2535,7 +2381,7 @@ WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Ch
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'RED'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'YELLOW',
@@ -2543,8 +2389,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng x Bình Văn Band'
@@ -2552,7 +2396,7 @@ WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Ch
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'YELLOW'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'PINK',
@@ -2560,8 +2404,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng x Bình Văn Band'
@@ -2569,7 +2411,7 @@ WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Ch
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'PINK'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'GREEN',
@@ -2577,8 +2419,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng x Bình Văn Band'
@@ -2586,7 +2426,7 @@ WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Ch
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'GREEN'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'BLUE',
@@ -2594,8 +2434,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng x Bình Văn Band'
@@ -2603,7 +2441,7 @@ WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Ch
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'BLUE'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'PURPLE',
@@ -2611,8 +2449,6 @@ SELECT
     150,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Cheng x Bình Văn Band'
@@ -2621,7 +2457,7 @@ WHERE e.title = 'THE BROTHERS | Đỗ Hoàng Hiệp x Tăng Phúc x Hà Lê x Ch
   );
 
 -- Hạng vé cho sự kiện [8/20]: Whisper of Two Hearts [Hoàng Hải - Phương Linh]
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'RUNG ĐỘNG',
@@ -2629,8 +2465,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Whisper of Two Hearts [Hoàng Hải - Phương Linh]'
@@ -2638,7 +2472,7 @@ WHERE e.title = 'Whisper of Two Hearts [Hoàng Hải - Phương Linh]'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'RUNG ĐỘNG'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'NỒNG NÀN',
@@ -2646,8 +2480,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Whisper of Two Hearts [Hoàng Hải - Phương Linh]'
@@ -2655,7 +2487,7 @@ WHERE e.title = 'Whisper of Two Hearts [Hoàng Hải - Phương Linh]'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'NỒNG NÀN'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SAY ĐẮM',
@@ -2663,8 +2495,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Whisper of Two Hearts [Hoàng Hải - Phương Linh]'
@@ -2672,7 +2502,7 @@ WHERE e.title = 'Whisper of Two Hearts [Hoàng Hải - Phương Linh]'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SAY ĐẮM'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'THĂNG HOA',
@@ -2680,8 +2510,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Whisper of Two Hearts [Hoàng Hải - Phương Linh]'
@@ -2690,7 +2518,7 @@ WHERE e.title = 'Whisper of Two Hearts [Hoàng Hải - Phương Linh]'
   );
 
 -- Hạng vé cho sự kiện [9/20]: [CAT&MOUSE] THÀNH VÁ
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'STANDARD 1',
@@ -2698,8 +2526,6 @@ SELECT
     300,
     0,
     3,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = '[CAT&MOUSE] THÀNH VÁ'
@@ -2707,7 +2533,7 @@ WHERE e.title = '[CAT&MOUSE] THÀNH VÁ'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'STANDARD 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'VIP',
@@ -2715,8 +2541,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = '[CAT&MOUSE] THÀNH VÁ'
@@ -2724,7 +2548,7 @@ WHERE e.title = '[CAT&MOUSE] THÀNH VÁ'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'VIP'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SUPER VIP',
@@ -2732,8 +2556,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = '[CAT&MOUSE] THÀNH VÁ'
@@ -2741,7 +2563,7 @@ WHERE e.title = '[CAT&MOUSE] THÀNH VÁ'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SUPER VIP'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'STANDARD 2',
@@ -2749,8 +2571,6 @@ SELECT
     300,
     0,
     5,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = '[CAT&MOUSE] THÀNH VÁ'
@@ -2759,7 +2579,7 @@ WHERE e.title = '[CAT&MOUSE] THÀNH VÁ'
   );
 
 -- Hạng vé cho sự kiện [10/20]: Lễ Hội Bia Thủ Công
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Lễ Hội Bia Thủ Công - Harvest Beer Fest 2026',
@@ -2767,8 +2587,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Lễ Hội Bia Thủ Công'
@@ -2777,7 +2595,7 @@ WHERE e.title = 'Lễ Hội Bia Thủ Công'
   );
 
 -- Hạng vé cho sự kiện [11/20]: LCP 2026 Promotion Series
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Regular',
@@ -2785,8 +2603,6 @@ SELECT
     300,
     0,
     4,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'LCP 2026 Promotion Series'
@@ -2795,7 +2611,7 @@ WHERE e.title = 'LCP 2026 Promotion Series'
   );
 
 -- Hạng vé cho sự kiện [12/20]: Queens Of Glory - Giải Thể Thao Điện Tử Vinh Quang Nữ Hoàng
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Regular',
@@ -2803,8 +2619,6 @@ SELECT
     300,
     0,
     2,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Queens Of Glory - Giải Thể Thao Điện Tử Vinh Quang Nữ Hoàng'
@@ -2812,7 +2626,7 @@ WHERE e.title = 'Queens Of Glory - Giải Thể Thao Điện Tử Vinh Quang N�
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Regular'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'VIP',
@@ -2820,8 +2634,6 @@ SELECT
     300,
     0,
     2,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Queens Of Glory - Giải Thể Thao Điện Tử Vinh Quang Nữ Hoàng'
@@ -2830,7 +2642,7 @@ WHERE e.title = 'Queens Of Glory - Giải Thể Thao Điện Tử Vinh Quang N�
   );
 
 -- Hạng vé cho sự kiện [13/20]: Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SVIP 1',
@@ -2838,8 +2650,6 @@ SELECT
     50,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -2847,7 +2657,7 @@ WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SVIP 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SVIP 2',
@@ -2855,8 +2665,6 @@ SELECT
     50,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -2864,7 +2672,7 @@ WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SVIP 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'VIP 1',
@@ -2872,8 +2680,6 @@ SELECT
     50,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -2881,7 +2687,7 @@ WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'VIP 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'VIP 2',
@@ -2889,8 +2695,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -2898,7 +2702,7 @@ WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'VIP 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'STANDARD 1',
@@ -2906,8 +2710,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -2915,7 +2717,7 @@ WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'STANDARD 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'STANDARD 2',
@@ -2923,8 +2725,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -2933,7 +2733,7 @@ WHERE e.title = 'Hà Nội - Eifman Ballet Of ST. Petersubrg World Tour 2026'
   );
 
 -- Hạng vé cho sự kiện [14/20]: Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 2026
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SVIP 1',
@@ -2941,8 +2741,6 @@ SELECT
     50,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -2950,7 +2748,7 @@ WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 202
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SVIP 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'SVIP 2',
@@ -2958,8 +2756,6 @@ SELECT
     50,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -2967,7 +2763,7 @@ WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 202
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'SVIP 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'VIP 1',
@@ -2975,8 +2771,6 @@ SELECT
     50,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -2984,7 +2778,7 @@ WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 202
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'VIP 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'VIP 2',
@@ -2992,8 +2786,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -3001,7 +2793,7 @@ WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 202
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'VIP 2'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'STANDARD 1',
@@ -3009,8 +2801,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -3018,7 +2808,7 @@ WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 202
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'STANDARD 1'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'STANDARD 2',
@@ -3026,8 +2816,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 2026'
@@ -3036,7 +2824,7 @@ WHERE e.title = 'Hồ Chí Minh - Eifman Ballet Of ST. Petersubrg World Tour 202
   );
 
 -- Hạng vé cho sự kiện [15/20]: Nhà Hát Kịch IDECAF: Dưới Bóng Giai Nhân
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HẠNG VIP (không dành cho trẻ em dưới 12 tuổi)',
@@ -3044,8 +2832,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Nhà Hát Kịch IDECAF: Dưới Bóng Giai Nhân'
@@ -3053,7 +2839,7 @@ WHERE e.title = 'Nhà Hát Kịch IDECAF: Dưới Bóng Giai Nhân'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'HẠNG VIP (không dành cho trẻ em dưới 12 tuổi)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'HẠNG REGULAR (không dành cho trẻ dưới 12 tuổi)',
@@ -3061,8 +2847,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Nhà Hát Kịch IDECAF: Dưới Bóng Giai Nhân'
@@ -3071,7 +2855,7 @@ WHERE e.title = 'Nhà Hát Kịch IDECAF: Dưới Bóng Giai Nhân'
   );
 
 -- Hạng vé cho sự kiện [16/20]: Nhà Hát Kịch IDECAF: Hồn Ai Nấy Giữ
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Hạng VIP (Không dành cho trẻ em dưới 12 tuổi)',
@@ -3079,8 +2863,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Nhà Hát Kịch IDECAF: Hồn Ai Nấy Giữ'
@@ -3088,7 +2870,7 @@ WHERE e.title = 'Nhà Hát Kịch IDECAF: Hồn Ai Nấy Giữ'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Hạng VIP (Không dành cho trẻ em dưới 12 tuổi)'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Hạng Regular (Không dành cho trẻ em dưới 12 tuổi)',
@@ -3096,8 +2878,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Nhà Hát Kịch IDECAF: Hồn Ai Nấy Giữ'
@@ -3106,7 +2886,7 @@ WHERE e.title = 'Nhà Hát Kịch IDECAF: Hồn Ai Nấy Giữ'
   );
 
 -- Hạng vé cho sự kiện [17/20]: Sân khấu Trương Hùng Minh: Song Trùng
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'VIP',
@@ -3114,8 +2894,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Sân khấu Trương Hùng Minh: Song Trùng'
@@ -3123,7 +2901,7 @@ WHERE e.title = 'Sân khấu Trương Hùng Minh: Song Trùng'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'VIP'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Thường',
@@ -3131,8 +2909,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Sân khấu Trương Hùng Minh: Song Trùng'
@@ -3141,7 +2917,7 @@ WHERE e.title = 'Sân khấu Trương Hùng Minh: Song Trùng'
   );
 
 -- Hạng vé cho sự kiện [18/20]: SÂN KHẤU BAN MAI - VỞ NHẠC KỊCH THIẾU NHI: PENNY - Ô MÊ LY
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Ban Mai',
@@ -3149,8 +2925,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'SÂN KHẤU BAN MAI - VỞ NHẠC KỊCH THIẾU NHI: PENNY - Ô MÊ LY'
@@ -3158,7 +2932,7 @@ WHERE e.title = 'SÂN KHẤU BAN MAI - VỞ NHẠC KỊCH THIẾU NHI: PENNY - �
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Ban Mai'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Sương Sớm',
@@ -3166,8 +2940,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'SÂN KHẤU BAN MAI - VỞ NHẠC KỊCH THIẾU NHI: PENNY - Ô MÊ LY'
@@ -3175,7 +2947,7 @@ WHERE e.title = 'SÂN KHẤU BAN MAI - VỞ NHẠC KỊCH THIẾU NHI: PENNY - �
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Sương Sớm'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Mây Trắng',
@@ -3183,8 +2955,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'SÂN KHẤU BAN MAI - VỞ NHẠC KỊCH THIẾU NHI: PENNY - Ô MÊ LY'
@@ -3193,7 +2963,7 @@ WHERE e.title = 'SÂN KHẤU BAN MAI - VỞ NHẠC KỊCH THIẾU NHI: PENNY - �
   );
 
 -- Hạng vé cho sự kiện [19/20]: TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Tinh hoa đạo học - Vé người lớn',
@@ -3201,8 +2971,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
@@ -3210,7 +2978,7 @@ WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Tinh hoa đạo học - Vé người lớn'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Tinh hoa đạo học - Vé trẻ em cao 1m - 1.3m',
@@ -3218,8 +2986,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
@@ -3227,7 +2993,7 @@ WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Tinh hoa đạo học - Vé trẻ em cao 1m - 1.3m'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Sử đá lưu danh',
@@ -3235,8 +3001,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
@@ -3244,7 +3008,7 @@ WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Sử đá lưu danh'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Sử đá lưu danh - Vé Trẻ em 1m - 1,3m',
@@ -3252,8 +3016,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
@@ -3261,7 +3023,7 @@ WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Sử đá lưu danh - Vé Trẻ em 1m - 1,3m'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'COMBO 2 show',
@@ -3269,8 +3031,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
@@ -3278,7 +3038,7 @@ WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'COMBO 2 show'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'COMBO 2 show - Vé trẻ em cao 1m - 1.3m',
@@ -3286,8 +3046,6 @@ SELECT
     300,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
@@ -3295,7 +3053,7 @@ WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'COMBO 2 show - Vé trẻ em cao 1m - 1.3m'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Vé trẻ em cao dưới 1m',
@@ -3303,8 +3061,6 @@ SELECT
     300,
     0,
     1,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
@@ -3313,7 +3069,7 @@ WHERE e.title = 'TOUR ĐÊM VĂN MIẾU - VAN MIEU NIGHT TOUR'
   );
 
 -- Hạng vé cho sự kiện [20/20]: Mystic Night Show - Magic & Comedy in Saigon
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Adult Ticket',
@@ -3321,8 +3077,6 @@ SELECT
     150,
     0,
     10,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mystic Night Show - Magic & Comedy in Saigon'
@@ -3330,7 +3084,7 @@ WHERE e.title = 'Mystic Night Show - Magic & Comedy in Saigon'
       SELECT 1 FROM ticket_types tt WHERE tt.event_id = e.id AND tt.name = 'Adult Ticket'
   );
 
-INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, sale_start, sale_end, created_at, updated_at)
+INSERT INTO ticket_types (event_id, name, price, total_quantity, sold_quantity, max_per_order, created_at, updated_at)
 SELECT
     e.id,
     'Child Ticket (6-15 years)',
@@ -3338,8 +3092,6 @@ SELECT
     300,
     0,
     5,
-    @NOW - INTERVAL 1 DAY,
-    e.start_time - INTERVAL 1 HOUR,
     @NOW, @NOW
 FROM events e
 WHERE e.title = 'Mystic Night Show - Magic & Comedy in Saigon'

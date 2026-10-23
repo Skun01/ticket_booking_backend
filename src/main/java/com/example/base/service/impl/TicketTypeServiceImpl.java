@@ -42,7 +42,7 @@ public class TicketTypeServiceImpl implements TicketTypeService {
 		Event event = findLockedOwnEvent(organizerId, eventId);
 		validateQuantity(event, null, request);
 		TicketType ticketType = new TicketType(event, request.name().trim(), request.price(), request.totalQuantity(),
-				request.maxPerOrder(), request.saleStart(), request.saleEnd());
+				request.maxPerOrder());
 		ticketTypeRepository.saveAndFlush(ticketType);
 
 		return TicketTypeResponse.from(ticketType);
@@ -58,8 +58,7 @@ public class TicketTypeServiceImpl implements TicketTypeService {
 		TicketType ticketType = ticketTypeRepository.findLockedById(ticketTypeId)
 				.orElseThrow(() -> new AppException(TicketTypeErrorCode.TICKET_TYPE_NOT_FOUND));
 		validateQuantity(event, ticketTypeId, request);
-		ticketType.update(request.name().trim(), request.price(), request.totalQuantity(), request.maxPerOrder(),
-				request.saleStart(), request.saleEnd());
+		ticketType.update(request.name().trim(), request.price(), request.totalQuantity(), request.maxPerOrder());
 
 		return TicketTypeResponse.from(ticketType);
 	}

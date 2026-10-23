@@ -14,6 +14,7 @@ public record EventRequest(
 		@NotBlank @Size(max = 200) String title,
 		@Size(max = 15000) String description,
 		@Size(max = 500) String bannerUrl,
+		@NotNull Instant salesStartTime,
 		@NotNull @Future Instant startTime,
 		@NotNull Instant endTime) {
 }

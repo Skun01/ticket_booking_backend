@@ -67,11 +67,11 @@ Tìm kiếm sự kiện public bằng **Specification** được mô tả ở ph
 - Cho phép `DRAFT → PUBLISHED`, `DRAFT/PUBLISHED → CANCELLED`, `PUBLISHED → ENDED`.
   Không chuyển về `DRAFT`, không mở lại sự kiện đã hủy/kết thúc.
 - Để publish: sự kiện chưa bắt đầu và có ít nhất một hạng vé. Chỉ kết thúc khi đã qua `endTime`.
-- `endTime > startTime`; thời gian dùng ISO-8601 UTC, ví dụ `2027-06-01T12:00:00Z`.
+- `salesStartTime < startTime < endTime`; thời gian dùng ISO-8601 UTC, ví dụ `2027-06-01T12:00:00Z`.
+  `salesStartTime` bắt buộc nhưng có thể ở quá khứ; `startTime` vẫn phải ở tương lai khi tạo/cập nhật.
 - Giá vé không âm, tối đa 10 chữ số nguyên và 2 chữ số thập phân.
   `maxPerOrder <= totalQuantity`, tổng số vé mọi hạng không vượt sức chứa địa điểm.
-- `saleStart`/`saleEnd` có thể bỏ trống; nếu có, khoảng bán phải hợp lệ và không vượt thời điểm bắt đầu sự kiện.
-  Khi bỏ trống, khoảng bán mặc định kết thúc tại `startTime`.
+- Thời gian mở bán thuộc sự kiện, dùng chung cho mọi hạng vé. Hạng vé không còn `saleStart`/`saleEnd`.
 - Không xóa danh mục/địa điểm đang được sự kiện sử dụng (`409`). Không đổi sức chứa địa điểm đã gắn sự kiện.
 - `POST` thành công trả `201`, xóa trả `204`, dữ liệu sai trả `400`, không đúng role/owner trả `403`,
   không tìm thấy trả `404`, slug trùng hoặc xung đột cấu hình trả `409` (ProblemDetail có `code`).
@@ -99,6 +99,7 @@ Organizer tạo sự kiện (dùng ID danh mục/địa điểm thực tế):
   "title":"Đêm nhạc mùa hè",
   "description":"Chương trình biểu diễn trực tiếp",
   "bannerUrl":null,
+  "salesStartTime":"2027-05-01T00:00:00Z",
   "startTime":"2027-06-01T12:00:00Z",
   "endTime":"2027-06-01T15:00:00Z"
 }
@@ -111,9 +112,7 @@ Organizer tạo hạng vé trước khi publish:
   "name":"Standard",
   "price":250000.00,
   "totalQuantity":500,
-  "maxPerOrder":5,
-  "saleStart":"2027-05-01T00:00:00Z",
-  "saleEnd":"2027-06-01T11:00:00Z"
+  "maxPerOrder":5
 }
 ```
 
@@ -163,14 +162,15 @@ curl -G "http://localhost:8080/api/events" \
 ```
 
 Response phân trang gồm `content`, `page`, `size`, `totalElements`, `totalPages`.
-Mỗi phần tử là DTO tóm tắt: `id`, `title`, `bannerUrl`, `startTime`, `endTime`, `category`, `venue`.
+Mỗi phần tử là DTO tóm tắt: `id`, `title`, `bannerUrl`, `salesStartTime`, `startTime`, `endTime`,
+`category`, `venue`.
 Danh sách không tải các hạng vé vì không cần cho DTO tóm tắt.
 
 ### Chi tiết và tồn vé
 
-`GET /api/events/{id}` trả thêm `description` và `ticketTypes` (sắp xếp ID tăng dần).
-Mỗi hạng vé có `availableQuantity = totalQuantity - soldQuantity`, giá và khoảng bán vé.
-Hạng vé hết chỗ hoặc chưa mở bán vẫn được hiển thị; số còn lại không đồng nghĩa được phép đặt ngay.
+`GET /api/events/{id}` trả thêm `description`, `salesStartTime` và `ticketTypes` (sắp xếp ID tăng dần).
+Mỗi hạng vé có giá và `availableQuantity = totalQuantity - soldQuantity`; lịch bán lấy từ sự kiện.
+Hạng vé hết chỗ hoặc sự kiện chưa mở bán vẫn được hiển thị; số còn lại không đồng nghĩa được phép đặt ngay.
 Điều kiện đặt vé được xử lý ở Phase 4, tồn vé có thể thay đổi sau khi xem.
 `soldQuantity` bao gồm cả vé đang giữ bởi đơn `PENDING` và vé đã thanh toán, không chỉ vé đã trả tiền.
 ID không tồn tại hoặc sự kiện `DRAFT`/`CANCELLED`/`ENDED` đều trả `404`, code `EVENT_NOT_FOUND`.
@@ -216,9 +216,9 @@ Các API yêu cầu Bearer JWT; danh sách dùng `PageResponse`, `page=0`, `size
 ```
 
 - Mỗi đơn hiện mua **một hạng vé**, `quantity` từ `1` đến `100` và không vượt `maxPerOrder`.
-- Tài khoản phải `ACTIVE`; event phải `PUBLISHED`, chưa đến `startTime`.
-  Khoảng bán vé là `[saleStart, saleEnd)`; thiếu `saleStart` thì không giới hạn đầu,
-  thiếu `saleEnd` thì vẫn phải mua trước `startTime`.
+- Tài khoản phải `ACTIVE`; event phải `PUBLISHED` và thời điểm đặt nằm trong
+  `[salesStartTime, startTime)`. Trước giờ mở bán trả `SALE_NOT_OPEN`; từ `startTime` trở đi
+  hoặc event không còn `PUBLISHED` trả `EVENT_NOT_BOOKABLE`.
 - Giá lấy từ DB và chốt vào `OrderItem.unitPrice`; client không quyết định giá/tổng tiền.
   Chưa triển khai mã giảm giá: `promoCode` dự phòng, `discountAmount = 0`.
 - Conditional native UPDATE tăng `sold_quantity` nếu `quantity <= total_quantity - sold_quantity`.
@@ -244,7 +244,8 @@ Không truyền body khi pay thì mặc định MOCK thành công. Hoặc gửi:
   đơn vẫn `PENDING`, giữ chỗ không bị mất và không sinh ticket/message.
   Một `Payment(FAILED)` được lưu bằng transaction `REQUIRES_NEW` riêng; `paidAt` để trống.
 - Đơn hết hạn trả `409 / ORDER_EXPIRED`; nếu còn `PENDING`, API chuyển `EXPIRED` và trả kho trước khi trả lỗi.
-  Khoảng giữ chỗ có thể vượt `saleEnd`: đơn đã giữ hợp lệ vẫn được pay trước `expiresAt` nếu event còn mở.
+  Đơn đã giữ hợp lệ vẫn được pay trước `expiresAt` nếu event còn mở;
+  luồng thanh toán không có lịch bán riêng theo hạng vé.
 - Đơn `CANCELLED` không pay được; event bị hủy/kết thúc thì không nhận thanh toán mới.
 
 ### Hủy, hết hạn và check-in

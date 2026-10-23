@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: 015-add-event-sales-start-time
+      author: truongtv
+      changes:
+        - addColumn:
+            tableName: events
+            columns:
+              - column:
+                  name: sales_start_time
+                  type: DATETIME(6)
+        - sql:
+            dbms: mysql
+            splitStatements: false
+            stripComments: true
+            sql: |
+              UPDATE events e
+              LEFT JOIN (
+                  SELECT
+                      tt.event_id,
+                      COUNT(*) AS tier_count,
+                      SUM(CASE WHEN tt.sale_start IS NULL THEN 1 ELSE 0 END) AS null_sale_start_count,
+                      MIN(tt.sale_start) AS earliest_sale_start
+                  FROM ticket_types tt
+                  GROUP BY tt.event_id
+              ) tier_sales ON tier_sales.event_id = e.id
+              SET e.sales_start_time = CASE
+                  WHEN COALESCE(tier_sales.tier_count, 0) = 0
+                      OR tier_sales.null_sale_start_count > 0
+                      THEN e.created_at
+                  ELSE tier_sales.earliest_sale_start
+              END
+        - sql:
+            dbms: mysql
+            splitStatements: false
+            stripComments: true
+            sql: |
+              UPDATE events e
+              LEFT JOIN (
+                  SELECT
+                      tt.event_id,
+                      MIN(o.created_at) AS earliest_pending_order_created_at
+                  FROM ticket_types tt
+                  JOIN order_items oi ON oi.ticket_type_id = tt.id
+                  JOIN orders o ON o.id = oi.order_id
+                  WHERE o.status = 'PENDING'
+                  GROUP BY tt.event_id
+              ) pending_orders ON pending_orders.event_id = e.id
+              SET e.sales_start_time = LEAST(
+                  e.sales_start_time,
+                  COALESCE(pending_orders.earliest_pending_order_created_at, e.sales_start_time),
+                  e.start_time - INTERVAL 1 MICROSECOND
+              )
+        - addNotNullConstraint:
+            tableName: events
+            columnName: sales_start_time
+            columnDataType: DATETIME(6)
+      rollback:
+        - dropColumn:
+            tableName: events
+            columnName: sales_start_time

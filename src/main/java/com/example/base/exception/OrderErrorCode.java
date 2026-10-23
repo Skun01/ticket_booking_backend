@@ -14,7 +14,7 @@ public enum OrderErrorCode implements ErrorCode {
 	CUSTOMER_INACTIVE(HttpStatus.FORBIDDEN, "Customer account is not active"),
 	INVALID_ORDER_QUANTITY(HttpStatus.BAD_REQUEST, "Quantity must be between 1 and 100 and within max per order"),
 	EVENT_NOT_BOOKABLE(HttpStatus.CONFLICT, "Event is not open for booking or payment"),
-	SALE_NOT_OPEN(HttpStatus.CONFLICT, "Ticket sales have not opened or have ended"),
+	SALE_NOT_OPEN(HttpStatus.CONFLICT, "Event ticket sales have not opened"),
 	SOLD_OUT(HttpStatus.CONFLICT, "Not enough tickets available"),
 	INVENTORY_CONFLICT(HttpStatus.CONFLICT, "Ticket inventory could not be released"),
 	ORDER_NOT_PENDING(HttpStatus.CONFLICT, "Order is no longer pending"),

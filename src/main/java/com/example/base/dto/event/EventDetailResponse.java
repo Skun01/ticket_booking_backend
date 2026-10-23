@@ -9,7 +9,7 @@ import com.example.base.dto.ticket.TicketTypeResponse;
 import com.example.base.dto.venue.VenueResponse;
 
 public record EventDetailResponse(Long id, String title, String description, String bannerUrl,
-		Instant startTime, Instant endTime, CategoryResponse category, VenueResponse venue,
+		Instant salesStartTime, Instant startTime, Instant endTime, CategoryResponse category, VenueResponse venue,
 		List<TicketTypeResponse> ticketTypes) {
 
 	public static EventDetailResponse from(Event event) {
@@ -17,8 +17,8 @@ public record EventDetailResponse(Long id, String title, String description, Str
 				.map(TicketTypeResponse::from).toList();
 
 		return new EventDetailResponse(event.getId(), event.getTitle(), event.getDescription(), event.getBannerUrl(),
-				event.getStartTime(), event.getEndTime(), CategoryResponse.from(event.getCategory()),
-				VenueResponse.from(event.getVenue()), ticketTypes);
+				event.getSalesStartTime(), event.getStartTime(), event.getEndTime(),
+				CategoryResponse.from(event.getCategory()), VenueResponse.from(event.getVenue()), ticketTypes);
 	}
 
 }

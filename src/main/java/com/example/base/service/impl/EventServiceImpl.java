@@ -63,7 +63,7 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	@Cacheable(value = "event-detail", key = "#eventId")
+	@Cacheable(value = "event-detail-v2", key = "#eventId")
 	public EventDetailResponse getPublic(Long eventId) {
 		Event event = eventRepository.findByIdAndStatus(eventId, EventStatus.PUBLISHED)
 				.orElseThrow(() -> new AppException(EventErrorCode.EVENT_NOT_FOUND));
@@ -93,7 +93,7 @@ public class EventServiceImpl implements EventService {
 		Category category = findCategory(request.categoryId());
 		Venue venue = findLockedVenue(request.venueId());
 		Event event = new Event(organizer, category, venue, request.title().trim(), request.description(),
-				request.bannerUrl(), request.startTime(), request.endTime());
+				request.bannerUrl(), request.salesStartTime(), request.startTime(), request.endTime());
 		eventRepository.saveAndFlush(event);
 
 		return EventResponse.from(event);
@@ -101,7 +101,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	@Transactional
-	@CacheEvict(value = "event-detail", key = "#eventId")
+	@CacheEvict(value = "event-detail-v2", key = "#eventId")
 	public EventResponse update(Long organizerId, Long eventId, EventRequest request) {
 		Event event = findLockedOwnEvent(organizerId, eventId);
 		event.requireDraft();
@@ -112,16 +112,15 @@ public class EventServiceImpl implements EventService {
 		if (totalQuantity > venue.getCapacity()) {
 			throw new AppException(EventErrorCode.VENUE_CAPACITY_EXCEEDED);
 		}
-		ticketTypes.forEach(ticketType -> ticketType.validateSaleForEventStart(request.startTime()));
 		event.update(category, venue, request.title().trim(), request.description(), request.bannerUrl(),
-				request.startTime(), request.endTime());
+				request.salesStartTime(), request.startTime(), request.endTime());
 
 		return EventResponse.from(event);
 	}
 
 	@Override
 	@Transactional
-	@CacheEvict(value = "event-detail", key = "#eventId")
+	@CacheEvict(value = "event-detail-v2", key = "#eventId")
 	public EventResponse changeStatus(Long organizerId, Long eventId, EventStatusRequest request) {
 		Event event = findLockedOwnEvent(organizerId, eventId);
 		switch (request.status()) {

@@ -1,7 +1,6 @@
 package com.example.base.dto.ticket;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -14,7 +13,5 @@ public record TicketTypeRequest(
 		@NotBlank @Size(max = 100) String name,
 		@NotNull @DecimalMin("0.00") @Digits(integer = 10, fraction = 2) BigDecimal price,
 		@Positive int totalQuantity,
-		@Positive int maxPerOrder,
-		Instant saleStart,
-		Instant saleEnd) {
+		@Positive int maxPerOrder) {
 }
