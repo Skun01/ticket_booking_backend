@@ -35,6 +35,17 @@ public final class EventSpecifications {
 				builder.lower(root.get("venue").get("city")), normalizedCity);
 	}
 
+	public static Specification<Event> keyword(String keyword) {
+		if (keyword == null || keyword.isBlank()) {
+			return Specification.unrestricted();
+		}
+		String pattern = "%" + keyword.trim().toLowerCase(Locale.ROOT) + "%";
+
+		return (root, query, builder) -> builder.or(
+				builder.like(builder.lower(root.get("title")), pattern),
+				builder.like(builder.lower(root.get("description")), pattern));
+	}
+
 	public static Specification<Event> startFrom(Instant from) {
 		if (from == null) {
 			return Specification.unrestricted();

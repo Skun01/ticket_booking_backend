@@ -55,6 +55,7 @@ public class EventServiceImpl implements EventService {
 				EventSpecifications.statusIs(EventStatus.PUBLISHED),
 				EventSpecifications.categoryId(filter.categoryId()),
 				EventSpecifications.city(filter.city()),
+				EventSpecifications.keyword(filter.keyword()),
 				EventSpecifications.startFrom(filter.from()),
 				EventSpecifications.startTo(filter.to()));
 
