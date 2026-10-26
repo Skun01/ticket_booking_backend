@@ -59,7 +59,7 @@ public class TicketType extends BaseEntity {
 
 	public void requireBookable(int quantity, Instant now) {
 		event.requireBookable(now);
-		if (quantity < 1 || quantity > 100 || quantity > maxPerOrder) {
+		if (quantity < 1 || quantity > maxPerOrder) {
 			throw new AppException(OrderErrorCode.INVALID_ORDER_QUANTITY);
 		}
 	}

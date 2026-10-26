@@ -64,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
 		User customer = userRepository.findById(customerId)
 				.orElseThrow(() -> new AppException(UserErrorCode.USER_NOT_FOUND));
 		requireActiveCustomer(customer);
-		// READ_COMMITTED giúp đọc cấu hình vé mới nhất sau khi đã lấy khóa event, không dùng snapshot cũ.
+
 		TicketType ticketType = reserveStock(request.ticketTypeId(), request.quantity());
 		Instant expiresAt = Instant.now().plus(properties.holdMinutes(), ChronoUnit.MINUTES);
 		if (ticketType.getEvent().getStartTime().isBefore(expiresAt)) {
@@ -98,11 +98,12 @@ public class OrderServiceImpl implements OrderService {
 		}
 		Instant paidAt = Instant.now();
 		expireBeforePayment(order, paidAt);
-		// Entity đang managed nên dirty checking ghi PAID khi commit, không cần gọi save(order).
+
 		order.markPaid(paidAt);
 		if (request.simulateFailure()) {
 			throw new PaymentDeclinedException(orderId, request.method(), order.getTotalAmount());
 		}
+
 		for (OrderItem item : order.getItems()) {
 			for (int i = 0; i < item.getQuantity(); i++) {
 				ticketRepository.save(new Ticket(item));
