@@ -21,7 +21,6 @@ public class OrderExpiryJob {
 		int expired = 0;
 		for (Long orderId : orderService.findExpiredIds(Instant.now(), 100)) {
 			try {
-				// Gọi qua bean khác để mỗi đơn có transaction riêng, không mắc lỗi self-invocation.
 				if (orderService.expire(orderId)) {
 					expired++;
 				}

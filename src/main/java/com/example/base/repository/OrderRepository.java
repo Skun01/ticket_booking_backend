@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
@@ -20,7 +22,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	Optional<Order> findLockedById(Long id);
 
-	List<Order> findByStatusAndExpiresAtLessThanEqualOrderByExpiresAtAscIdAsc(
-			OrderStatus status, Instant cutoff, Pageable pageable);
+	@Query("""
+			SELECT o.id FROM Order o
+			WHERE o.status = :status AND o.expiresAt <= :cutoff
+			ORDER BY o.expiresAt ASC, o.id ASC
+			""")
+	List<Long> findExpiredIds(@Param("status") OrderStatus status, @Param("cutoff") Instant cutoff, Pageable pageable);
 
 }

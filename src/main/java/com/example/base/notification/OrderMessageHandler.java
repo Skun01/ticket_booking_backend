@@ -30,7 +30,6 @@ public class OrderMessageHandler {
 
 			return;
 		}
-		// ACK nằm ngoài retry nghiệp vụ để lỗi channel không làm gửi SMTP lại trong cùng lần xử lý.
 		channel.basicAck(tag, false);
 	}
 

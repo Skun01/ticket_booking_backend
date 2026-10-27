@@ -138,7 +138,10 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public PageResponse<OrderSummaryResponse> listOwn(Long customerId, Pageable pageable) {
-		return PageResponse.from(orderRepository.findByUserId(customerId, pageable).map(OrderSummaryResponse::from));
+		return PageResponse.from(
+				orderRepository.findByUserId(customerId, pageable)
+						.map(OrderSummaryResponse::from)
+		);
 	}
 
 	@Override
@@ -152,8 +155,8 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public List<Long> findExpiredIds(Instant cutoff, int limit) {
-		return orderRepository.findByStatusAndExpiresAtLessThanEqualOrderByExpiresAtAscIdAsc(
-				OrderStatus.PENDING, cutoff, PageRequest.of(0, limit)).stream().map(Order::getId).toList();
+		return orderRepository.findExpiredIds(OrderStatus.PENDING, cutoff,
+				PageRequest.of(0, limit));
 	}
 
 	@Override
@@ -220,7 +223,6 @@ public class OrderServiceImpl implements OrderService {
 	private void expireBeforePayment(Order order, Instant now) {
 		if (order.expire(now)) {
 			releaseStock(order);
-			// Ngoại lệ này không rollback để trạng thái EXPIRED và lượng kho đã trả vẫn được commit.
 			throw new OrderExpiredException();
 		}
 	}

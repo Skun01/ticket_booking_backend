@@ -27,7 +27,7 @@ public class OrderMailProcessor {
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 	public void process(OrderMessage message) {
 		PaidOrderMailData data = orderMailService.loadPaidOrder(message);
-		// Chỉ khóa receipt của mail, không giữ khóa ghi order trong lúc gọi SMTP.
+
 		mailDeliveryRepository.prepare(message.orderId(), message.messageId());
 		MailDelivery delivery = mailDeliveryRepository.findLockedByOrderId(message.orderId())
 				.orElseThrow(() -> new AppException(NotificationErrorCode.MAIL_DELIVERY_NOT_PREPARED));
@@ -35,7 +35,7 @@ public class OrderMailProcessor {
 			return;
 		}
 		mailSender.send(data);
-		// Gửi thành công trước rồi mới ghi dấu; SMTP không có giao dịch chung với DB nên chưa thể exactly-once.
+
 		delivery.markSent(Instant.now());
 	}
 

@@ -48,7 +48,6 @@ public class RabbitConfig {
 		return orderQueue(properties.logQueue(), properties.logDeadLetterQueue());
 	}
 
-	// mail.queue chỉ nhận message đơn đã thanh toán để gửi vé
 	@Bean
 	Binding mailBinding() {
 		return BindingBuilder.bind(mailQueue())
@@ -56,7 +55,6 @@ public class RabbitConfig {
 			.with(properties.routingKeyPaid());
 	}
 
-	// log.queue nhận mọi sự kiện order.* để ghi activity log
 	@Bean
 	Binding logBinding() {
 		return BindingBuilder.bind(logQueue())
@@ -72,12 +70,14 @@ public class RabbitConfig {
 
 	@Bean
 	Queue mailDeadLetterQueue() {
-		return QueueBuilder.durable(properties.mailDeadLetterQueue()).build();
+		return QueueBuilder.durable(properties.mailDeadLetterQueue())
+				.build();
 	}
 
 	@Bean
 	Queue logDeadLetterQueue() {
-		return QueueBuilder.durable(properties.logDeadLetterQueue()).build();
+		return QueueBuilder.durable(properties.logDeadLetterQueue())
+				.build();
 	}
 
 	@Bean
@@ -115,25 +115,29 @@ public class RabbitConfig {
 		RetryPolicy policy = RetryPolicy.builder().maxRetries(properties.consumerMaxRetries())
 				.delay(Duration.ofMillis(properties.consumerRetryDelayMillis()))
 				.multiplier(2).maxDelay(Duration.ofMillis(properties.consumerRetryDelayMillis() * 2))
-				.includes(RuntimeException.class).excludes(InvalidOrderMessageException.class).build();
+				.includes(RuntimeException.class)
+				.excludes(InvalidOrderMessageException.class)
+				.build();
 
 		return new RetryTemplate(policy);
 	}
 
 	@Bean
 	SimpleRabbitListenerContainerFactory orderListenerContainerFactory(
-			SimpleRabbitListenerContainerFactoryConfigurer configurer, ConnectionFactory connectionFactory) {
+			SimpleRabbitListenerContainerFactoryConfigurer configurer,
+			ConnectionFactory connectionFactory) {
 		SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
 		configurer.configure(factory, connectionFactory);
+
 		factory.setMessageConverter(jsonMessageConverter());
 		factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
 		factory.setPrefetchCount(properties.consumerPrefetch());
 		factory.setDefaultRequeueRejected(false);
-		// Retry chỉ bao quanh nghiệp vụ trong listener, không retry thao tác ACK hoặc nhân đôi với Boot retry.
+
 		factory.setAdviceChain();
+
 		ConditionalRejectingErrorHandler errorHandler = new ConditionalRejectingErrorHandler();
 		errorHandler.setRejectManual(true);
-		// Message lỗi JSON được replay từ DLQ vẫn phải vào DLQ, không bỏ mất vì đã có x-death.
 		errorHandler.setDiscardFatalsWithXDeath(false);
 		factory.setErrorHandler(errorHandler);
 

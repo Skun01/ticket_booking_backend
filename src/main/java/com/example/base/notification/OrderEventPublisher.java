@@ -30,8 +30,7 @@ public class OrderEventPublisher {
 			return;
 		}
 		try {
-			// Chỉ gửi sau commit để consumer không thấy đơn chưa commit hoặc đơn sẽ rollback.
-			rabbitTemplate.convertAndSend(properties.exchange(), 
+			rabbitTemplate.convertAndSend(properties.exchange(),
 				routingKey, message, amqpMessage -> {
 					amqpMessage.getMessageProperties().setMessageId(message.messageId());
 					amqpMessage.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
@@ -40,7 +39,6 @@ public class OrderEventPublisher {
 			});
 		}
 		catch (RuntimeException ex) {
-			// DB đã commit nên không báo pay/cancel thất bại giả; cần outbox nếu muốn retry bền vững.
 			log.error("Order committed but RabbitMQ publish failed: messageId={}, orderId={}, routingKey={}",
 					message.messageId(), message.orderId(), routingKey, ex);
 		}
