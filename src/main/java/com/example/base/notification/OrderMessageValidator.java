@@ -23,8 +23,8 @@ public class OrderMessageValidator {
 			throw new InvalidOrderMessageException();
 		}
 		String expectedRoutingKey = switch (message.status()) {
-			case PAID -> properties.routingKeyPaid();
-			case CANCELLED -> paidOnly ? null : properties.routingKeyCancelled();
+			case PAID -> properties.orderEvent().routingKeyPaid();
+			case CANCELLED -> paidOnly ? null : properties.orderEvent().routingKeyCancelled();
 			default -> null;
 		};
 		String headerId = rawMessage.getMessageProperties().getMessageId();

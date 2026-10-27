@@ -2,6 +2,7 @@ package com.example.base.config;
 
 import java.time.Duration;
 
+import com.example.base.config.property.OrderProperties;
 import com.example.base.config.property.RabbitProperties;
 import com.example.base.exception.InvalidOrderMessageException;
 
@@ -28,31 +29,33 @@ import org.springframework.core.retry.RetryTemplate;
 public class RabbitConfig {
 
 	private final RabbitProperties properties;
+	private final OrderProperties orderProperties;
 
-	public RabbitConfig(RabbitProperties properties) {
+	public RabbitConfig(RabbitProperties properties, OrderProperties orderProperties) {
 		this.properties = properties;
+		this.orderProperties = orderProperties;
 	}
 
 	@Bean
 	TopicExchange orderExchange() {
-		return new TopicExchange(properties.exchange());
+		return new TopicExchange(properties.orderEvent().exchange());
 	}
 
 	@Bean
 	Queue mailQueue() {
-		return orderQueue(properties.mailQueue(), properties.mailDeadLetterQueue());
+		return orderQueue(properties.orderEvent().mailQueue(), properties.orderEvent().mailDeadLetterQueue());
 	}
 
 	@Bean
 	Queue logQueue() {
-		return orderQueue(properties.logQueue(), properties.logDeadLetterQueue());
+		return orderQueue(properties.orderEvent().logQueue(), properties.orderEvent().logDeadLetterQueue());
 	}
 
 	@Bean
 	Binding mailBinding() {
 		return BindingBuilder.bind(mailQueue())
 			.to(orderExchange())
-			.with(properties.routingKeyPaid());
+			.with(properties.orderEvent().routingKeyPaid());
 	}
 
 	@Bean
@@ -65,18 +68,18 @@ public class RabbitConfig {
 	// DLQ
 	@Bean
 	DirectExchange orderDeadLetterExchange() {
-		return new DirectExchange(properties.deadLetterExchange());
+		return new DirectExchange(properties.orderEvent().deadLetterExchange());
 	}
 
 	@Bean
 	Queue mailDeadLetterQueue() {
-		return QueueBuilder.durable(properties.mailDeadLetterQueue())
+		return QueueBuilder.durable(properties.orderEvent().mailDeadLetterQueue())
 				.build();
 	}
 
 	@Bean
 	Queue logDeadLetterQueue() {
-		return QueueBuilder.durable(properties.logDeadLetterQueue())
+		return QueueBuilder.durable(properties.orderEvent().logDeadLetterQueue())
 				.build();
 	}
 
@@ -84,14 +87,60 @@ public class RabbitConfig {
 	Binding mailDeadLetterBinding() {
 		return BindingBuilder.bind(mailDeadLetterQueue())
 			.to(orderDeadLetterExchange())
-			.with(properties.mailDeadLetterQueue());
+			.with(properties.orderEvent().mailDeadLetterQueue());
 	}
 
 	@Bean
 	Binding logDeadLetterBinding() {
 		return BindingBuilder.bind(logDeadLetterQueue())
 			.to(orderDeadLetterExchange())
-			.with(properties.logDeadLetterQueue());
+			.with(properties.orderEvent().logDeadLetterQueue());
+	}
+
+	@Bean
+	DirectExchange orderHoldExchange() {
+		return new DirectExchange(properties.orderExpiry().holdExchange());
+	}
+
+	@Bean
+	Queue orderHoldQueue() {
+		return QueueBuilder.durable(properties.orderExpiry().holdQueue())
+				.deadLetterExchange(properties.orderEvent().deadLetterExchange())
+				.deadLetterRoutingKey(properties.orderExpiry().routingKeyExpired())
+				.ttl((int) Duration.ofMinutes(orderProperties.holdMinutes()).toMillis())
+				.build();
+	}
+
+	@Bean
+	Binding orderHoldBinding() {
+		return BindingBuilder.bind(orderHoldQueue())
+				.to(orderHoldExchange())
+				.with(properties.orderExpiry().routingKeyHold());
+	}
+
+	@Bean
+	Queue orderExpireQueue() {
+		return orderQueue(properties.orderExpiry().expireQueue(), properties.orderExpiry().expireDeadLetterQueue());
+	}
+
+	@Bean
+	Binding orderExpireBinding() {
+		return BindingBuilder.bind(orderExpireQueue())
+				.to(orderDeadLetterExchange())
+				.with(properties.orderExpiry().routingKeyExpired());
+	}
+
+	@Bean
+	Queue orderExpireDeadLetterQueue() {
+		return QueueBuilder.durable(properties.orderExpiry().expireDeadLetterQueue())
+				.build();
+	}
+
+	@Bean
+	Binding orderExpireDeadLetterBinding() {
+		return BindingBuilder.bind(orderExpireDeadLetterQueue())
+				.to(orderDeadLetterExchange())
+				.with(properties.orderExpiry().expireDeadLetterQueue());
 	}
 	
 	// convert data
@@ -112,9 +161,9 @@ public class RabbitConfig {
 	// config retry for consumer
 	@Bean
 	RetryTemplate orderConsumerRetryTemplate() {
-		RetryPolicy policy = RetryPolicy.builder().maxRetries(properties.consumerMaxRetries())
-				.delay(Duration.ofMillis(properties.consumerRetryDelayMillis()))
-				.multiplier(2).maxDelay(Duration.ofMillis(properties.consumerRetryDelayMillis() * 2))
+		RetryPolicy policy = RetryPolicy.builder().maxRetries(properties.listener().maxRetries())
+				.delay(Duration.ofMillis(properties.listener().retryDelayMillis()))
+				.multiplier(2).maxDelay(Duration.ofMillis(properties.listener().retryDelayMillis() * 2))
 				.includes(RuntimeException.class)
 				.excludes(InvalidOrderMessageException.class)
 				.build();
@@ -131,7 +180,7 @@ public class RabbitConfig {
 
 		factory.setMessageConverter(jsonMessageConverter());
 		factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
-		factory.setPrefetchCount(properties.consumerPrefetch());
+		factory.setPrefetchCount(properties.listener().prefetch());
 		factory.setDefaultRequeueRejected(false);
 
 		factory.setAdviceChain();
@@ -146,8 +195,8 @@ public class RabbitConfig {
 
 	private Queue orderQueue(String name, String deadLetterQueue) {
 		QueueBuilder builder = QueueBuilder.durable(name);
-		if (properties.declareDeadLetterArguments()) {
-			builder.deadLetterExchange(properties.deadLetterExchange())
+		if (properties.listener().declareDeadLetterArguments()) {
+			builder.deadLetterExchange(properties.orderEvent().deadLetterExchange())
 				.deadLetterRoutingKey(deadLetterQueue);
 		}
 

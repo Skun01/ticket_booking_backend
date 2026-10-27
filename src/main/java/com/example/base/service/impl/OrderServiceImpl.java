@@ -3,7 +3,6 @@ package com.example.base.service.impl;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
-import java.util.List;
 
 import com.example.base.config.property.OrderProperties;
 import com.example.base.domain.Event;
@@ -38,7 +37,6 @@ import com.example.base.service.OrderService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -72,6 +70,7 @@ public class OrderServiceImpl implements OrderService {
 		}
 		Order order = new Order(customer, ticketType, request.quantity(), expiresAt);
 		orderRepository.saveAndFlush(order);
+		eventPublisher.publishEvent(OrderMessage.from(order, order.getCreatedAt()));
 
 		return OrderResponse.from(order);
 	}
@@ -151,12 +150,6 @@ public class OrderServiceImpl implements OrderService {
 		requireOwner(order, customerId);
 
 		return OrderResponse.from(order);
-	}
-
-	@Override
-	public List<Long> findExpiredIds(Instant cutoff, int limit) {
-		return orderRepository.findExpiredIds(OrderStatus.PENDING, cutoff,
-				PageRequest.of(0, limit));
 	}
 
 	@Override

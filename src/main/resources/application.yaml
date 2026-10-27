@@ -70,18 +70,29 @@ app:
   mail-sender:
     from: ${MAIL_FROM:no-reply@sportslot.local}
   rabbitmq:
-    exchange: ${RABBITMQ_EXCHANGE:order.exchange}
-    mail-queue: ${RABBITMQ_MAIL_QUEUE:mail.queue}
-    log-queue: ${RABBITMQ_LOG_QUEUE:log.queue}
-    routing-key-paid: order.paid
-    routing-key-cancelled: order.cancelled
-    dead-letter-exchange: ${RABBITMQ_DEAD_LETTER_EXCHANGE:order.dlx}
-    mail-dead-letter-queue: ${RABBITMQ_MAIL_DLQ:mail.dlq}
-    log-dead-letter-queue: ${RABBITMQ_LOG_DLQ:log.dlq}
-    consumer-max-retries: ${RABBITMQ_CONSUMER_MAX_RETRIES:2}
-    consumer-retry-delay-millis: ${RABBITMQ_CONSUMER_RETRY_DELAY_MILLIS:1000}
-    consumer-prefetch: ${RABBITMQ_CONSUMER_PREFETCH:10}
-    declare-dead-letter-arguments: ${RABBITMQ_DECLARE_DEAD_LETTER_ARGUMENTS:true}
+    listener:
+      prefetch: ${RABBITMQ_CONSUMER_PREFETCH:10}
+      max-retries: ${RABBITMQ_CONSUMER_MAX_RETRIES:2}
+      retry-delay-millis: ${RABBITMQ_CONSUMER_RETRY_DELAY_MILLIS:1000}
+      declare-dead-letter-arguments: ${RABBITMQ_DECLARE_DEAD_LETTER_ARGUMENTS:true}
+
+    order-event:
+      exchange: ${RABBITMQ_EXCHANGE:order.exchange}
+      dead-letter-exchange: ${RABBITMQ_DEAD_LETTER_EXCHANGE:order.dlx}
+      routing-key-paid: order.paid
+      routing-key-cancelled: order.cancelled
+      mail-queue: ${RABBITMQ_MAIL_QUEUE:mail.queue}
+      mail-dead-letter-queue: ${RABBITMQ_MAIL_DLQ:mail.dlq}
+      log-queue: ${RABBITMQ_LOG_QUEUE:log.queue}
+      log-dead-letter-queue: ${RABBITMQ_LOG_DLQ:log.dlq}
+
+    order-expiry:
+      hold-exchange: ${RABBITMQ_HOLD_EXCHANGE:order.hold.exchange}
+      hold-queue: ${RABBITMQ_HOLD_QUEUE:order.hold.queue}
+      expire-queue: ${RABBITMQ_EXPIRE_QUEUE:order.expire.queue}
+      expire-dead-letter-queue: ${RABBITMQ_EXPIRE_DLQ:order.expire.dlq}
+      routing-key-hold: order.hold
+      routing-key-expired: order.expired
 
 springdoc:
   swagger-ui:

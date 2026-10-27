@@ -1,6 +1,7 @@
 package com.example.base.notification;
 
 import com.example.base.config.property.RabbitProperties;
+import com.example.base.domain.enums.OrderStatus;
 import com.example.base.dto.order.OrderMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,20 +23,24 @@ public class OrderEventPublisher {
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void publish(OrderMessage message) {
 		String routingKey = switch (message.status()) {
-			case PAID -> properties.routingKeyPaid();
-			case CANCELLED -> properties.routingKeyCancelled();
+			case PAID -> properties.orderEvent().routingKeyPaid();
+			case CANCELLED -> properties.orderEvent().routingKeyCancelled();
+			case PENDING -> properties.orderExpiry().routingKeyHold();
 			default -> null;
 		};
 		if (routingKey == null) {
 			return;
 		}
 		try {
-			rabbitTemplate.convertAndSend(properties.exchange(),
-				routingKey, message, amqpMessage -> {
-					amqpMessage.getMessageProperties().setMessageId(message.messageId());
-					amqpMessage.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+			String targetExchange = message.status() == OrderStatus.PENDING
+					? properties.orderExpiry().holdExchange()
+					: properties.orderEvent().exchange();
 
-					return amqpMessage;
+			rabbitTemplate.convertAndSend(targetExchange, routingKey, message, amqpMessage -> {
+				amqpMessage.getMessageProperties().setMessageId(message.messageId());
+				amqpMessage.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+
+				return amqpMessage;
 			});
 		}
 		catch (RuntimeException ex) {
