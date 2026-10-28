@@ -1,6 +1,7 @@
 package com.example.base.service.impl;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import com.example.base.config.property.JwtProperties;
 import com.example.base.domain.RefreshToken;
@@ -37,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
 		User user = userService.create(request.email(), request.password(),
 				request.fullName(), request.phone(), Role.CUSTOMER);
 
-		return issueTokens(user);
+		return issueTokens(user, UUID.randomUUID().toString());
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
 				.filter(found -> passwordEncoder.matches(request.password(), found.getPassword()))
 				.orElseThrow(() -> new AppException(AuthErrorCode.INVALID_CREDENTIALS));
 
-		return issueTokens(user);
+		return issueTokens(user, UUID.randomUUID().toString());
 	}
 
 	@Override
@@ -61,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
 				.orElseThrow(AuthServiceImpl::invalidRefreshToken);
 
 		if (token.isRevoked()) {
-			refreshTokenRepository.revokeAllByUserId(token.getUserId(), now);
+			refreshTokenRepository.revokeAllByFamilyId(token.getFamilyId(), now);
 
 			throw invalidRefreshToken();
 		}
@@ -70,21 +71,21 @@ public class AuthServiceImpl implements AuthService {
 		}
 		token.revoke(now);
 
-		return issueTokens(userService.getById(token.getUserId()));
+		return issueTokens(userService.getById(token.getUserId()), token.getFamilyId());
 	}
 
 	@Override
 	@Transactional
 	public void logout(String rawRefreshToken) {
 		refreshTokenRepository.findByTokenHash(tokenService.hash(rawRefreshToken))
-				.ifPresent(token -> token.revoke(Instant.now()));
+				.ifPresent(token -> refreshTokenRepository.revokeAllByFamilyId(token.getFamilyId(), Instant.now()));
 	}
 
-	private AuthTokens issueTokens(User user) {
+	private AuthTokens issueTokens(User user, String familyId) {
 		String refreshToken = tokenService.generateRefreshToken();
 		Instant expiresAt = Instant.now().plus(jwtProperties.refreshTokenTtl());
 		refreshTokenRepository.save(
-				new RefreshToken(tokenService.hash(refreshToken), user.getId(), expiresAt));
+				new RefreshToken(tokenService.hash(refreshToken), user.getId(), familyId, expiresAt));
 
 		return new AuthTokens(tokenService.createAccessToken(user), refreshToken);
 	}

@@ -29,3 +29,5 @@ databaseChangeLog:
       file: db/changelog/changes/014-create-revenue-report-procedure.yaml
   - include:
       file: db/changelog/changes/015-add-event-sales-start-time.yaml
+  - include:
+      file: db/changelog/changes/016-add-family-id-to-refresh-tokens.yaml

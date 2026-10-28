@@ -1,6 +1,7 @@
 package com.example.base.domain;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,14 +22,22 @@ public class RefreshToken extends BaseEntity {
 	@Column(nullable = false)
 	private Long userId;
 
+	@Column(nullable = false, length = 36)
+	private String familyId;
+
 	@Column(nullable = false)
 	private Instant expiresAt;
 
 	private Instant revokedAt;
 
 	public RefreshToken(String tokenHash, Long userId, Instant expiresAt) {
+		this(tokenHash, userId, UUID.randomUUID().toString(), expiresAt);
+	}
+
+	public RefreshToken(String tokenHash, Long userId, String familyId, Instant expiresAt) {
 		this.tokenHash = tokenHash;
 		this.userId = userId;
+		this.familyId = familyId;
 		this.expiresAt = expiresAt;
 	}
 
