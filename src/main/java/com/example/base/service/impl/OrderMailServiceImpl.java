@@ -35,13 +35,19 @@ public class OrderMailServiceImpl implements OrderMailService {
 		}
 		List<TicketMailData> tickets = ticketRepository.findByOrderItemOrderIdOrderByIdAsc(order.getId()).stream()
 				.map(TicketMailData::from).toList();
-		long expectedQuantity = order.getItems().stream().mapToLong(item -> item.getQuantity()).sum();
+		long expectedQuantity = order.getItems().stream()
+				.mapToLong(item -> item.getQuantity())
+				.sum();
+
 		if (tickets.isEmpty() || tickets.size() != expectedQuantity) {
 			throw new InvalidOrderMessageException();
 		}
 
-		return new PaidOrderMailData(order.getUser().getEmail(), order.getUser().getFullName(), order.getOrderCode(),
-				order.getTotalAmount(), tickets);
+		return new PaidOrderMailData(order.getUser().getEmail(), order.getUser().getFullName(),
+				order.getOrderCode(),
+				order.getTotalAmount(),
+				tickets
+		);
 	}
 
 }

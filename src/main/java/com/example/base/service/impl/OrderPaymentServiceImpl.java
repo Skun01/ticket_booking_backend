@@ -26,7 +26,6 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
 			return orderService.pay(customerId, orderId, request);
 		}
 		catch (PaymentDeclinedException ex) {
-			// Chờ transaction giữ khóa order rollback xong để FK của bản ghi FAILED không tự chờ khóa cha.
 			paymentAuditService.recordFailure(ex.getOrderId(), ex.getMethod(), ex.getAmount());
 			throw ex;
 		}

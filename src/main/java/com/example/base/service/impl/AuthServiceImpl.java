@@ -34,7 +34,6 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	@Transactional
 	public AuthTokens register(RegisterRequest request) {
-		// user tự đăng ký luôn là khách hàng; organizer/admin do admin cấp
 		User user = userService.create(request.email(), request.password(),
 				request.fullName(), request.phone(), Role.CUSTOMER);
 
@@ -51,7 +50,6 @@ public class AuthServiceImpl implements AuthService {
 		return issueTokens(user);
 	}
 
-	// không roll back để xử lý case token bị thu hồi rồi mà vẫn bị dùng
 	@Override
 	@Transactional(noRollbackFor = AppException.class)
 	public AuthTokens refresh(String rawRefreshToken) {
@@ -63,7 +61,6 @@ public class AuthServiceImpl implements AuthService {
 				.orElseThrow(AuthServiceImpl::invalidRefreshToken);
 
 		if (token.isRevoked()) {
-			// token đã bị thu hồi mà vẫn bị gửi lên -> thu hồi mọi token
 			refreshTokenRepository.revokeAllByUserId(token.getUserId(), now);
 
 			throw invalidRefreshToken();
