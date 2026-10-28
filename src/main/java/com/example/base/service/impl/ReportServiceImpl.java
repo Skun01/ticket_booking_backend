@@ -17,9 +17,6 @@ import com.example.base.repository.EventRepository;
 import com.example.base.repository.PaymentRepository;
 import com.example.base.service.ReportService;
 import com.example.base.util.JasperPdfRenderer;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.ParameterMode;
-import jakarta.persistence.StoredProcedureQuery;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -32,7 +29,6 @@ public class ReportServiceImpl implements ReportService {
 
 	private final EventRepository eventRepository;
 	private final PaymentRepository paymentRepository;
-	private final EntityManager entityManager;
 	private final JasperPdfRenderer pdfRenderer;
 
 	@Override
@@ -62,17 +58,7 @@ public class ReportServiceImpl implements ReportService {
 			throw new AppException(ReportErrorCode.INVALID_REPORT_RANGE);
 		}
 
-		// call procedure 
-		StoredProcedureQuery procedure = entityManager.createStoredProcedureQuery("sp_revenue_report");
-		procedure.registerStoredProcedureParameter(1, Instant.class, ParameterMode.IN);
-		procedure.registerStoredProcedureParameter(2, Instant.class, ParameterMode.IN);
-		procedure.setParameter(1, from);
-		procedure.setParameter(2, to);
-
-		List<?> rows = procedure.getResultList();
-		List<DailyRevenueResponse> dailyRevenue = rows.stream()
-				.map(row -> (Object[]) row)
-				.map(DailyRevenueResponse::from).toList();
+		List<DailyRevenueResponse> dailyRevenue = paymentRepository.findDailyRevenueByProcedure(from, to);
 
 		List<TopEventResponse> topEvents = paymentRepository.findTopEvents(from, to).stream()
 				.map(TopEventResponse::from)
