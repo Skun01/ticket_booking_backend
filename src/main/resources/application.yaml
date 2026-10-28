@@ -57,7 +57,7 @@ app:
   cors:
     allowed-origins: "${CORS_ALLOWED_ORIGINS:http://localhost:[*]}"
   admin:
-    email: ${ADMIN_EMAIL:thaitruong@admin.com}
+    email: ${ADMIN_EMAIL:}
     password: ${ADMIN_PASSWORD:12345678}
   organizer:
     email: ${ORGANIZER_EMAIL:thaitruong@organizer.com}

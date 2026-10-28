@@ -3,7 +3,10 @@ package com.example.base.dto.report;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record DailyRevenueResponse(LocalDate date, long paidOrders, BigDecimal revenue) {
+public record DailyRevenueResponse(
+		LocalDate date,
+		long paidOrders,
+		BigDecimal revenue) {
 
 	public static DailyRevenueResponse from(DailyRevenueProjection row) {
 		return new DailyRevenueResponse(row.getRevenueDate(), row.getPaidOrders(), row.getRevenue());

@@ -7,6 +7,7 @@ import java.util.List;
 import com.example.base.domain.Event;
 import com.example.base.dto.report.DailyRevenueResponse;
 import com.example.base.dto.report.EventReportResponse;
+import com.example.base.dto.report.EventTotalsProjection;
 import com.example.base.dto.report.RevenueReportResponse;
 import com.example.base.dto.report.TopEventResponse;
 import com.example.base.exception.AppException;
@@ -41,20 +42,13 @@ public class ReportServiceImpl implements ReportService {
 		if (!event.isOwnedBy(organizerId)) {
 			throw new AppException(EventErrorCode.EVENT_NOT_OWNED);
 		}
-		// Chỉ cộng đơn đã trả tiền vì sold_quantity còn bao gồm cả chỗ giữ của đơn PENDING.
-		Object[] totals = (Object[]) entityManager.createNativeQuery("""
-				SELECT COUNT(DISTINCT o.id), COALESCE(SUM(oi.quantity), 0), COALESCE(SUM(p.amount), 0)
-				FROM payments p
-				JOIN orders o ON o.id = p.order_id
-				JOIN order_items oi ON oi.order_id = o.id
-				JOIN ticket_types tt ON tt.id = oi.ticket_type_id
-				WHERE p.status = 'SUCCESS' AND o.status = 'PAID' AND tt.event_id = :eventId
-				""").setParameter("eventId", eventId).getSingleResult();
+		EventTotalsProjection totals = paymentRepository.findTotalsByEventId(eventId);
 		List<DailyRevenueResponse> dailyRevenue = paymentRepository.findDailyRevenueByEventId(eventId).stream()
-				.map(DailyRevenueResponse::from).toList();
+				.map(DailyRevenueResponse::from)
+				.toList();
 
-		return new EventReportResponse(event.getId(), event.getTitle(), ((Number) totals[0]).longValue(),
-				((Number) totals[1]).longValue(), (BigDecimal) totals[2], dailyRevenue);
+		return new EventReportResponse(event.getId(), event.getTitle(), totals.getPaidOrders(),
+				totals.getTicketsSold(), totals.getRevenue(), dailyRevenue);
 	}
 
 	@Override
@@ -76,14 +70,20 @@ public class ReportServiceImpl implements ReportService {
 		procedure.setParameter(2, to);
 
 		List<?> rows = procedure.getResultList();
-		List<DailyRevenueResponse> dailyRevenue = rows.stream().map(row -> (Object[]) row)
+		List<DailyRevenueResponse> dailyRevenue = rows.stream()
+				.map(row -> (Object[]) row)
 				.map(DailyRevenueResponse::from).toList();
 
 		List<TopEventResponse> topEvents = paymentRepository.findTopEvents(from, to).stream()
-				.map(TopEventResponse::from).toList();
+				.map(TopEventResponse::from)
+				.toList();
 
-		long paidOrders = dailyRevenue.stream().mapToLong(DailyRevenueResponse::paidOrders).sum();
-		BigDecimal revenue = dailyRevenue.stream().map(DailyRevenueResponse::revenue)
+		long paidOrders = dailyRevenue.stream()
+				.mapToLong(DailyRevenueResponse::paidOrders)
+				.sum();
+
+		BigDecimal revenue = dailyRevenue.stream()
+				.map(DailyRevenueResponse::revenue)
 				.reduce(BigDecimal.ZERO.setScale(2), BigDecimal::add);
 
 		return new RevenueReportResponse(from, to, paidOrders, revenue, dailyRevenue, topEvents);

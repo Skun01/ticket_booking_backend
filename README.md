@@ -482,7 +482,7 @@ Chỉ bổ sung hai API theo plan, không thêm bảng, queue hay cơ chế ch�
 
 1. `PaymentRepository`: `@Query(nativeQuery = true)` cho doanh thu theo ngày của event và top 10 event.
    Interface projection chỉ dùng để đọc kết quả SQL; controller trả DTO record, không trả entity/proxy.
-2. `ReportServiceImpl.getEventReport`: `EntityManager.createNativeQuery` tính tổng event,
+2. `ReportServiceImpl.getEventReport`: `PaymentRepository.findTotalsByEventId` tính tổng event,
    kiểm tra owner trước khi truy vấn số liệu.
 3. `ReportServiceImpl.getRevenueReport`: `EntityManager.createStoredProcedureQuery` gọi
    `sp_revenue_report(IN p_from DATETIME(6), IN p_to DATETIME(6))`, map result set thành DTO theo ngày.

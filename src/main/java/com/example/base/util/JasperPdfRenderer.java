@@ -42,7 +42,6 @@ public class JasperPdfRenderer {
 
 	public JasperPdfRenderer(QrCodeGenerator qrCodeGenerator) {
 		this.qrCodeGenerator = qrCodeGenerator;
-		// Template cố định được compile một lần; mỗi lần fill vẫn dùng dữ liệu và tham số riêng.
 		this.ticketReport = compile("reports/ticket.jrxml");
 		this.revenueReport = compile("reports/revenue.jrxml");
 	}
@@ -67,7 +66,7 @@ public class JasperPdfRenderer {
 		parameters.put("EVENT_TITLE", report.eventTitle());
 		parameters.put("TICKETS_SOLD", report.ticketsSold());
 		List<Map<String, ?>> rows = new ArrayList<>();
-		// Record không có JavaBean getter, dùng map để Jasper đọc field không phụ thuộc reflection của BeanUtils.
+
 		for (DailyRevenueResponse day : report.dailyRevenue()) {
 			rows.add(Map.of("date", day.date().toString(), "paidOrders", day.paidOrders(), "revenue", day.revenue()));
 		}
@@ -88,7 +87,9 @@ public class JasperPdfRenderer {
 	private byte[] render(JasperReport report, Map<String, Object> parameters, JRDataSource dataSource) {
 		parameters.put(JRParameter.REPORT_LOCALE, Locale.forLanguageTag("vi-VN"));
 		try {
-			return JasperExportManager.exportReportToPdf(JasperFillManager.fillReport(report, parameters, dataSource));
+			return JasperExportManager.exportReportToPdf(
+					JasperFillManager.fillReport(report, parameters, dataSource)
+			);
 		}
 		catch (JRException ex) {
 			log.error("Could not render PDF template: {}", report.getName(), ex);

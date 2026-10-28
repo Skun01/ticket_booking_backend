@@ -26,7 +26,6 @@ public class ActivityLogServiceImpl implements ActivityLogService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 	public void record(OrderMessage message) {
-		// Khóa theo order để kiểm tra trùng và ghi log không bị race giữa các consumer/instance.
 		Order order = orderRepository.findLockedById(message.orderId())
 				.orElseThrow(InvalidOrderMessageException::new);
 		messageValidator.requireMatches(message, order);
@@ -34,6 +33,7 @@ public class ActivityLogServiceImpl implements ActivityLogService {
 		if (activityLogRepository.existsByMessageIdAndAction(message.messageId(), activityLog.getAction())) {
 			return;
 		}
+
 		activityLogRepository.saveAndFlush(activityLog);
 	}
 

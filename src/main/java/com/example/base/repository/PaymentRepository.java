@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.base.domain.Payment;
 import com.example.base.dto.report.DailyRevenueProjection;
+import com.example.base.dto.report.EventTotalsProjection;
 import com.example.base.dto.report.TopEventProjection;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
+
+	@Query(value = """
+			SELECT COUNT(DISTINCT o.id) AS paidOrders,
+			       COALESCE(SUM(oi.quantity), 0) AS ticketsSold,
+			       COALESCE(SUM(p.amount), 0) AS revenue
+			FROM payments p
+			JOIN orders o ON o.id = p.order_id
+			JOIN order_items oi ON oi.order_id = o.id
+			JOIN ticket_types tt ON tt.id = oi.ticket_type_id
+			WHERE p.status = 'SUCCESS' AND o.status = 'PAID' AND tt.event_id = :eventId
+			""", nativeQuery = true)
+	EventTotalsProjection findTotalsByEventId(@Param("eventId") Long eventId);
 
 	@Query(value = """
 			SELECT DATE(p.paid_at) AS revenueDate,
@@ -40,6 +53,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 			ORDER BY ticketsSold DESC, revenue DESC, eventId ASC
 			LIMIT 10
 			""", nativeQuery = true)
-	List<TopEventProjection> findTopEvents(@Param("from") Instant from, @Param("to") Instant to);
+	List<TopEventProjection> findTopEvents(
+			@Param("from") Instant from,
+			@Param("to") Instant to
+	);
 
 }

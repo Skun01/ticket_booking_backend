@@ -52,16 +52,20 @@ public class TicketServiceImpl implements TicketService {
 	public TicketResponse checkIn(Long organizerId, String ticketCode) {
 		Ticket ticket = ticketRepository.findLockedByTicketCode(ticketCode.trim())
 				.orElseThrow(() -> new AppException(BookingTicketErrorCode.TICKET_NOT_FOUND));
+
 		Long eventId = ticket.getOrderItem().getTicketType().getEvent().getId();
 		Event event = eventRepository.findBookingById(eventId)
 				.orElseThrow(() -> new AppException(BookingTicketErrorCode.TICKET_NOT_FOUND));
+
 		if (!event.isOwnedBy(organizerId)) {
 			throw new AppException(BookingTicketErrorCode.TICKET_NOT_OWNED_BY_ORGANIZER);
 		}
+
 		Instant now = Instant.now();
 		if (event.getStatus() != EventStatus.PUBLISHED || !now.isBefore(event.getEndTime())) {
 			throw new AppException(BookingTicketErrorCode.EVENT_NOT_OPEN_FOR_CHECKIN);
 		}
+
 		if (ticket.getOrderItem().getOrder().getStatus() != OrderStatus.PAID) {
 			throw new AppException(BookingTicketErrorCode.TICKET_NOT_VALID);
 		}
