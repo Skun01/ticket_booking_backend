@@ -2,6 +2,7 @@ package com.example.base.service.impl;
 
 import java.util.List;
 
+import com.example.base.config.RedisConfig;
 import com.example.base.domain.Category;
 import com.example.base.domain.Event;
 import com.example.base.domain.TicketType;
@@ -63,7 +64,7 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	@Cacheable(value = "event-detail-v2", key = "#eventId")
+	@Cacheable(value = RedisConfig.EVENT_DETAIL_CACHE, key = "#eventId")
 	public EventDetailResponse getPublic(Long eventId) {
 		Event event = eventRepository.findByIdAndStatus(eventId, EventStatus.PUBLISHED)
 				.orElseThrow(() -> new AppException(EventErrorCode.EVENT_NOT_FOUND));
@@ -101,7 +102,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	@Transactional
-	@CacheEvict(value = "event-detail-v2", key = "#eventId")
+	@CacheEvict(value = RedisConfig.EVENT_DETAIL_CACHE, key = "#eventId")
 	public EventResponse update(Long organizerId, Long eventId, EventRequest request) {
 		Event event = findLockedOwnEvent(organizerId, eventId);
 		event.requireDraft();
@@ -120,7 +121,7 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	@Transactional
-	@CacheEvict(value = "event-detail-v2", key = "#eventId")
+	@CacheEvict(value = RedisConfig.EVENT_DETAIL_CACHE, key = "#eventId")
 	public EventResponse changeStatus(Long organizerId, Long eventId, EventStatusRequest request) {
 		Event event = findLockedOwnEvent(organizerId, eventId);
 		switch (request.status()) {

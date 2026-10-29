@@ -18,6 +18,8 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 @EnableCaching
 public class RedisConfig {
 
+	public static final String EVENT_DETAIL_CACHE = "event-detail";
+
 	private final CacheProperties cacheProperties;
 
 	public RedisConfig(CacheProperties cacheProperties) {
@@ -51,7 +53,7 @@ public class RedisConfig {
 				.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.json()));
 
 		Map<String, RedisCacheConfiguration> cacheConfigs = Map.of(
-				"event-detail-v2", defaultConfig.entryTtl(cacheProperties.eventDetailTtl())
+				EVENT_DETAIL_CACHE, defaultConfig.entryTtl(cacheProperties.eventDetailTtl())
 		);
 
 		return RedisCacheManager.builder(connectionFactory)

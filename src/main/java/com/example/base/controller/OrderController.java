@@ -9,9 +9,11 @@ import com.example.base.dto.common.PageResponse;
 import com.example.base.dto.order.CreateOrderRequest;
 import com.example.base.dto.order.OrderResponse;
 import com.example.base.dto.order.OrderSummaryResponse;
+import com.example.base.dto.payment.PayOSCheckoutResponse;
 import com.example.base.dto.payment.PayOrderRequest;
 import com.example.base.service.OrderPaymentService;
 import com.example.base.service.OrderService;
+import com.example.base.service.PayOSPaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -39,6 +41,7 @@ public class OrderController {
 
 	private final OrderService orderService;
 	private final OrderPaymentService orderPaymentService;
+	private final PayOSPaymentService payOSPaymentService;
 
 	@Operation(summary = "Đặt vé và giữ chỗ")
 	@PostMapping
@@ -55,6 +58,18 @@ public class OrderController {
 		PayOrderRequest payment = request == null ? new PayOrderRequest(PaymentMethod.MOCK, false) : request;
 
 		return orderPaymentService.pay(Long.valueOf(jwt.getSubject()), id, payment);
+	}
+
+	@Operation(summary = "Tạo link thanh toán PayOS")
+	@PostMapping("/{id}/payos-checkout")
+	public PayOSCheckoutResponse createPayOSCheckout(@CurrentUser Jwt jwt, @PathVariable @Positive Long id) {
+		return payOSPaymentService.createPaymentLink(Long.valueOf(jwt.getSubject()), id);
+	}
+
+	@Operation(summary = "Đồng bộ trạng thái thanh toán PayOS")
+	@PostMapping("/{id}/payos-sync")
+	public OrderResponse syncPayOSPayment(@CurrentUser Jwt jwt, @PathVariable @Positive Long id) {
+		return payOSPaymentService.syncPayment(Long.valueOf(jwt.getSubject()), id);
 	}
 
 	@Operation(summary = "Hủy đơn vé chưa thanh toán")

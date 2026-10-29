@@ -1,5 +1,8 @@
 package com.example.base.service;
 
+import java.time.Instant;
+
+import com.example.base.domain.enums.PaymentMethod;
 import com.example.base.dto.common.PageResponse;
 import com.example.base.dto.order.CreateOrderRequest;
 import com.example.base.dto.order.OrderResponse;
@@ -13,6 +16,8 @@ public interface OrderService {
 	OrderResponse create(Long customerId, CreateOrderRequest request);
 
 	OrderResponse pay(Long customerId, Long orderId, PayOrderRequest request);
+
+	OrderResponse completePayment(Long orderId, PaymentMethod method, String transactionRef, Instant paidAt);
 
 	OrderResponse cancel(Long customerId, Long orderId);
 

@@ -13,6 +13,7 @@ import com.example.base.domain.Ticket;
 import com.example.base.domain.TicketType;
 import com.example.base.domain.User;
 import com.example.base.domain.enums.OrderStatus;
+import com.example.base.domain.enums.PaymentMethod;
 import com.example.base.domain.enums.UserStatus;
 import com.example.base.dto.common.PageResponse;
 import com.example.base.dto.order.CreateOrderRequest;
@@ -109,6 +110,31 @@ public class OrderServiceImpl implements OrderService {
 			}
 		}
 		paymentRepository.save(Payment.success(order, request.method(), paidAt));
+		eventPublisher.publishEvent(OrderMessage.from(order, paidAt));
+
+		return OrderResponse.from(order);
+	}
+
+	@Override
+	@Transactional
+	public OrderResponse completePayment(Long orderId, PaymentMethod method, String transactionRef, Instant paidAt) {
+		Order order = orderRepository.findLockedById(orderId)
+				.orElseThrow(() -> new AppException(OrderErrorCode.ORDER_NOT_FOUND));
+		if (order.getStatus() == OrderStatus.PAID) {
+			return OrderResponse.from(order);
+		}
+		if (order.getStatus() == OrderStatus.CANCELLED || order.getStatus() == OrderStatus.EXPIRED) {
+			return OrderResponse.from(order);
+		}
+		order.requirePending();
+		order.markPaid(paidAt);
+
+		for (OrderItem item : order.getItems()) {
+			for (int i = 0; i < item.getQuantity(); i++) {
+				ticketRepository.save(new Ticket(item));
+			}
+		}
+		paymentRepository.save(Payment.success(order, method, transactionRef, paidAt));
 		eventPublisher.publishEvent(OrderMessage.from(order, paidAt));
 
 		return OrderResponse.from(order);

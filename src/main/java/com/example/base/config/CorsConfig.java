@@ -20,7 +20,6 @@ public class CorsConfig {
 		config.setAllowedOriginPatterns(properties.allowedOrigins());
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 		config.setAllowedHeaders(List.of("*"));
-		// trình duyệt có thể gửi kèm cookies
 		config.setAllowCredentials(true);
 		config.setMaxAge(Duration.ofHours(1));
 
